@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  OPERATOR
+  ADMIN
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vehicles        Vehicle[]
+  bookings        Booking[]
+  notifications   Notification[]
+  reviews         Review[]
+  favorites       Favorite[]
+  auditLogs       AuditLog[]
+  parkingSessions ParkingSession[]
+}
+
+model Vehicle {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  plateNumber String   @unique
+  type        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entryLogs   VehicleEntryLog[]
+  sessions    ParkingSession[]
+}
+
+model ParkingLot {
+  id            String   @id @default(uuid())
+  name          String
+  location      String
+  coordinates   String   // JSON or simple string for MVP
+  pricing       Float
+  availability  Int
+  rating        Float    @default(4.5)
+  image         String   @default("")
+  hasEVCharging Boolean  @default(false)
+  isCovered     Boolean  @default(false)
+  hasSecurity   Boolean  @default(false)
+  isAccessible  Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  slots         ParkingSlot[]
+  reviews       Review[]
+  pricingRules  PricingRule[]
+  favorites     Favorite[]
+
+  @@index([location])
+}
+
+model ParkingSlot {
+  id        String      @id @default(uuid())
+  lotId     String
+  lot       ParkingLot  @relation(fields: [lotId], references: [id])
+  name      String      // e.g. A1, B2
+  status    SlotStatus  @default(AVAILABLE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  bookings  Booking[]
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  slotId    String
+  slot      ParkingSlot   @relation(fields: [slotId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  amount    Float
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  payments  Payment[]
+  sessions  ParkingSession[]
+
+  @@index([userId, status])
+  @@index([startTime, endTime])
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  bookingId      String
+  booking        Booking       @relation(fields: [bookingId], references: [id])
+  status         PaymentStatus @default(PENDING)
+  stripeChargeId String?
+  amount         Float
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  type       String
+  message    String
+  readStatus Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Review {
+  id         String     @id @default(uuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  lotId      String
+  lot        ParkingLot @relation(fields: [lotId], references: [id])
+  rating     Int
+  comment    String?
+  createdAt  DateTime   @default(now())
+}
+
+model Favorite {
+  id         String     @id @default(uuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  lotId      String
+  lot        ParkingLot @relation(fields: [lotId], references: [id])
+  createdAt  DateTime   @default(now())
+
+  @@unique([userId, lotId])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  details   String
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  discount    Float    // percentage or flat
+  maxUses     Int      @default(1)
+  usedCount   Int      @default(0)
+  expiryDate  DateTime
+  createdAt   DateTime @default(now())
+}
+
+model ParkingSession {
+  id        String   @id @default(uuid())
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+  entryTime DateTime
+  exitTime  DateTime?
+  status    String   // ACTIVE, COMPLETED
+  createdAt DateTime @default(now())
+}
+
+model VehicleEntryLog {
+  id        String   @id @default(uuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  cameraIds String?  // ID of the camera that scanned it
+  timestamp DateTime @default(now())
+  action    String   // ENTRY, EXIT
+}
+
+model PricingRule {
+  id          String     @id @default(uuid())
+  lotId       String
+  lot         ParkingLot @relation(fields: [lotId], references: [id])
+  dayOfWeek   Int?       // 0-6 (Sunday-Saturday)
+  startTime   String?    // e.g. "09:00"
+  endTime     String?    // e.g. "17:00"
+  multiplier  Float      // e.g. 1.5x during peak
+  createdAt   DateTime   @default(now())
+}
