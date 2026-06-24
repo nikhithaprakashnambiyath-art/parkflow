@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import PWARegistration from "@/components/PWARegistration";
-import dynamic from "next/dynamic";
+import AIFab from "@/components/AIFab";
 import { Toaster } from "sonner";
-
-const AIFab = dynamic(() => import("@/components/AIFab"), { ssr: false });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
