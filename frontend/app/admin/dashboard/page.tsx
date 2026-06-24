@@ -202,8 +202,8 @@ export default function AdminDashboard() {
       if (lot) {
         setNewLotName(lot.name);
         setNewLotAddress(lot.location);
-        setNewLotPricing(lot.basePricePerHour?.toString() || '50');
-        setNewLotSlots(lot._count?.slots?.toString() || '0');
+        setNewLotPricing(lot.pricing?.toString() || '50');
+        setNewLotSlots(lot.availability?.toString() || '0');
         setNewLotCoordinates(lot.coordinates || '{"lat":9.9312,"lng":76.2673}');
       }
     } else {
