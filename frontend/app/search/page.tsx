@@ -119,7 +119,7 @@ export default function SearchPage() {
                     <button
                       key={area}
                       onClick={() => handlePopularAreaClick(area)}
-                      className="px-3.5 py-2 rounded-xl bg-white shadow-sm dark:bg-slate-900/40 hover:bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-all duration-300 active:scale-95"
+                      className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900/40 shadow-sm border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-cyan-600 transition-all duration-300 active:scale-95"
                     >
                       {area}
                     </button>
