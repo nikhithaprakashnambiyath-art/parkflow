@@ -549,7 +549,7 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="flex-1" style={{ minHeight: 220 }}>
-                  <ResponsiveContainer width="100%" height="100%" minHeight={220}>
+                  <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={usageData}>
                       <XAxis dataKey="day" stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} />
                       <Tooltip 
