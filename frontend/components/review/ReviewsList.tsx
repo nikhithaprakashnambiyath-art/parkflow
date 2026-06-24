@@ -44,9 +44,9 @@ export function ReviewsList({
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="rounded-xl border border-white/5 bg-slate-900/50 p-6 text-center">
+      <div className="rounded-xl border border-slate-300 dark:border-white/5 bg-slate-900/50 p-6 text-center">
         <MessageSquare className="mx-auto h-8 w-8 text-slate-600 mb-2" />
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           No reviews yet. Be the first to share your experience!
         </p>
       </div>
@@ -65,12 +65,12 @@ export function ReviewsList({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-white/10 bg-slate-900/60 p-4"
+          className="rounded-xl border border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-900/60 p-4"
         >
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-3xl font-bold text-white">
+                <span className="text-3xl font-bold text-slate-950 dark:text-white font-medium">
                   {avgRating}
                 </span>
                 <div className="flex gap-0.5">
@@ -86,7 +86,7 @@ export function ReviewsList({
                   ))}
                 </div>
               </div>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                 Based on {reviews.length} reviews
               </p>
             </div>
@@ -102,14 +102,14 @@ export function ReviewsList({
                       : 0;
                   return (
                     <div key={rating} className="flex items-center gap-2">
-                      <span className="text-slate-500">{rating}★</span>
+                      <span className="text-slate-900 dark:text-slate-500">{rating}★</span>
                       <div className="w-20 h-1.5 rounded-full bg-slate-800">
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
-                      <span className="text-slate-500 w-8">{percentage}%</span>
+                      <span className="text-slate-900 dark:text-slate-500 w-8">{percentage}%</span>
                     </div>
                   );
                 })}
@@ -127,7 +127,7 @@ export function ReviewsList({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="rounded-xl border border-white/5 bg-slate-950/40 p-4 hover:border-white/10 transition-colors"
+            className="rounded-xl border border-slate-300 dark:border-white/5 bg-white shadow-sm dark:bg-slate-950/40 p-4 hover:border-slate-300 dark:border-white/10 transition-colors"
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-2">
@@ -148,12 +148,12 @@ export function ReviewsList({
                       />
                     ))}
                   </div>
-                  <span className="text-xs text-slate-500 font-medium">
+                  <span className="text-xs text-slate-900 dark:text-slate-500 font-medium">
                     {review.rating}.0
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs text-slate-500">
+              <div className="flex items-center gap-1 text-xs text-slate-900 dark:text-slate-500">
                 <Calendar className="h-3 w-3" />
                 {new Date(review.createdAt).toLocaleDateString("en-IN", {
                   year: "numeric",
@@ -165,7 +165,7 @@ export function ReviewsList({
 
             {/* Comment */}
             {review.comment && (
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 {review.comment}
               </p>
             )}
@@ -177,7 +177,7 @@ export function ReviewsList({
       {compact && reviews.length > 3 && (
         <motion.button
           whileHover={{ y: -2 }}
-          className="w-full py-2 rounded-lg border border-white/10 text-sm font-semibold text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-colors"
+          className="w-full py-2 rounded-lg border border-slate-300 dark:border-white/10 text-sm font-semibold text-cyan-600 dark:text-cyan-400 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-colors"
         >
           View all {reviews.length} reviews
         </motion.button>

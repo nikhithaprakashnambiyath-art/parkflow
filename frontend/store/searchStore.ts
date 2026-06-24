@@ -40,10 +40,14 @@ interface SearchState {
   setSearchQuery: (query: string) => void;
   setSelectedSpot: (spot: ParkingLot | null) => void;
   setFilters: (filters: Partial<SearchFilters>) => void;
-  resetFilters: () => void;
-  fetchResults: () => Promise<void>;
   fetchSuggestions: (query: string) => void;
+  startLiveUpdates: () => void;
+  stopLiveUpdates: () => void;
+  favorites: string[];
+  toggleFavorite: (id: string) => void;
 }
+
+let liveUpdateInterval: NodeJS.Timeout | null = null;
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -106,6 +110,16 @@ export const useSearchStore = create<SearchState>((set, get) => ({
   results: [],
   loading: false,
   error: null,
+  favorites: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('smartpark_favorites') || '[]') : [],
+
+  toggleFavorite: (id) => {
+    set((state) => {
+      const isFav = state.favorites.includes(id);
+      const newFavs = isFav ? state.favorites.filter(f => f !== id) : [...state.favorites, id];
+      if (typeof window !== 'undefined') localStorage.setItem('smartpark_favorites', JSON.stringify(newFavs));
+      return { favorites: newFavs };
+    });
+  },
 
   setSearchQuery: (query) => {
     set({ searchQuery: query });
@@ -148,11 +162,13 @@ export const useSearchStore = create<SearchState>((set, get) => ({
       if (filters.security) params.append("security", "true");
       if (filters.accessibility) params.append("accessibility", "true");
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/parking/search?${params.toString()}`,
-      );
+      const url = process.env.NEXT_PUBLIC_API_BASE_URL 
+        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/parking/search?${params.toString()}`
+        : `/api/parking/search?${params.toString()}`;
+
+      const response = await fetch(url);
       if (!response.ok) {
-        throw new Error("Failed to fetch parking locations");
+        throw new Error(`Failed to fetch parking locations (HTTP ${response.status})`);
       }
 
       const data = await response.json();
@@ -175,5 +191,38 @@ export const useSearchStore = create<SearchState>((set, get) => ({
       landmark.toLowerCase().includes(q),
     ).slice(0, 5); // Limit suggestions to 5
     set({ suggestions: matches });
+  },
+
+  startLiveUpdates: () => {
+    if (liveUpdateInterval) return;
+    liveUpdateInterval = setInterval(() => {
+      set((state) => {
+        // Randomly simulate bookings or departures in real-time, plus dynamic pricing
+        const updatedResults = state.results.map((spot) => {
+          if (Math.random() > 0.8) {
+            const change = Math.random() > 0.5 ? 1 : -1;
+            const newAvailability = Math.max(0, spot.availability + change);
+            
+            let newPricing = spot.pricing;
+            if (newAvailability < 5 && change === -1) {
+              newPricing = Math.floor(spot.pricing * 1.15); // 15% surge
+            } else if (newAvailability >= 5 && change === 1) {
+              newPricing = Math.max(40, Math.floor(spot.pricing * 0.9)); // drop price back down
+            }
+            
+            return { ...spot, availability: newAvailability, pricing: newPricing };
+          }
+          return spot;
+        });
+        return { results: updatedResults };
+      });
+    }, 5000);
+  },
+
+  stopLiveUpdates: () => {
+    if (liveUpdateInterval) {
+      clearInterval(liveUpdateInterval);
+      liveUpdateInterval = null;
+    }
   },
 }));

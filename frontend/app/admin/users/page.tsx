@@ -24,7 +24,7 @@ const MOCK_USERS = [
 
 const roleColors: Record<string, string> = {
   ADMIN: "bg-violet-500/10 text-violet-400 border-violet-500/20",
-  CUSTOMER: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  CUSTOMER: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20",
   OPERATOR: "bg-amber-500/10 text-amber-400 border-amber-500/20",
 };
 
@@ -66,23 +66,23 @@ export default function AdminUsersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-cyan-600 dark:text-cyan-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex selection:bg-cyan-500/30">
       <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-violet-500/5 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
+      <aside className="w-64 border-r border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
         <div className="flex items-center gap-2.5 mb-10 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium shadow-[0_0_15px_rgba(0,217,255,0.4)]">
             <span className="text-xs font-black">PF</span>
           </div>
-          <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-cyan-400 text-xs block tracking-wider font-bold">Admin</span></span>
+          <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-cyan-600 dark:text-cyan-400 text-xs block tracking-wider font-bold">Admin</span></span>
         </div>
 
         <nav className="flex-1 space-y-1">
@@ -93,7 +93,7 @@ export default function AdminUsersPage() {
             { label: "Settings", path: "/admin/settings" },
           ].map((item) => (
             <button key={item.path} onClick={() => router.push(item.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${item.active ? "bg-cyan-500/10 text-cyan-400" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${item.active ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5"}`}>
               {item.label}
             </button>
           ))}
@@ -108,12 +108,12 @@ export default function AdminUsersPage() {
         <header className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-black">User Management</h1>
-            <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">{users.length} total registered accounts</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest font-bold mt-1">{users.length} total registered accounts</p>
           </div>
           <div className="flex items-center gap-3">
             {(["ALL", "CUSTOMER", "OPERATOR", "ADMIN"] as const).map((r) => (
               <button key={r} onClick={() => setRoleFilter(r)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${roleFilter === r ? "bg-cyan-500/10 text-cyan-400 border-cyan-500/30" : "border-white/5 text-slate-400 hover:border-white/15"}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${roleFilter === r ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30" : "border-slate-300 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-white/15"}`}>
                 {r}
               </button>
             ))}
@@ -128,9 +128,9 @@ export default function AdminUsersPage() {
             { label: "Staff (Operators)", value: users.filter(u => u.role === "OPERATOR").length, color: "amber" },
             { label: "Admins", value: users.filter(u => u.role === "ADMIN").length, color: "violet" },
           ].map((stat, i) => (
-            <div key={i} className="bg-slate-900 border border-white/5 rounded-2xl p-5">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">{stat.label}</span>
-              <span className={`text-3xl font-black ${stat.color === "cyan" ? "text-cyan-400" : stat.color === "blue" ? "text-blue-400" : stat.color === "amber" ? "text-amber-400" : "text-violet-400"}`}>
+            <div key={i} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-2xl p-5">
+              <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-1">{stat.label}</span>
+              <span className={`text-3xl font-black ${stat.color === "cyan" ? "text-cyan-600 dark:text-cyan-400" : stat.color === "blue" ? "text-blue-400" : stat.color === "amber" ? "text-amber-400" : "text-violet-400"}`}>
                 {stat.value}
               </span>
             </div>
@@ -139,21 +139,21 @@ export default function AdminUsersPage() {
 
         {/* Search */}
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900 dark:text-slate-500" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by name or email..."
-            className="w-full bg-slate-900 border border-white/10 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none transition-all"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-950 dark:text-white font-medium focus:outline-none transition-all"
           />
         </div>
 
         {/* Users Table */}
-        <div className="bg-slate-900 border border-white/5 rounded-3xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/5 text-slate-500 font-bold uppercase tracking-wider">
+                <tr className="border-b border-slate-300 dark:border-white/5 text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider">
                   <th className="p-4">User</th>
                   <th className="p-4">Role</th>
                   <th className="p-4">Bookings</th>
@@ -174,12 +174,12 @@ export default function AdminUsersPage() {
                   >
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center text-xs font-black text-cyan-400 border border-cyan-500/10">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center text-xs font-black text-cyan-600 dark:text-cyan-400 border border-cyan-500/10">
                           {u.name?.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-bold text-white">{u.name}</p>
-                          <p className="text-slate-500 flex items-center gap-1"><Mail className="w-3 h-3" />{u.email}</p>
+                          <p className="font-bold text-slate-950 dark:text-white font-medium">{u.name}</p>
+                          <p className="text-slate-900 dark:text-slate-500 flex items-center gap-1"><Mail className="w-3 h-3" />{u.email}</p>
                         </div>
                       </div>
                     </td>
@@ -188,16 +188,16 @@ export default function AdminUsersPage() {
                         {u.role}
                       </span>
                     </td>
-                    <td className="p-4 font-bold text-slate-300">{u._count?.bookings ?? 0}</td>
-                    <td className="p-4 font-bold text-slate-300">{u._count?.vehicles ?? 0}</td>
-                    <td className="p-4 font-bold text-cyan-400">{formatCurrency(u.totalSpent ?? 0)}</td>
-                    <td className="p-4 text-slate-400">
+                    <td className="p-4 font-bold text-slate-700 dark:text-slate-300">{u._count?.bookings ?? 0}</td>
+                    <td className="p-4 font-bold text-slate-700 dark:text-slate-300">{u._count?.vehicles ?? 0}</td>
+                    <td className="p-4 font-bold text-cyan-600 dark:text-cyan-400">{formatCurrency(u.totalSpent ?? 0)}</td>
+                    <td className="p-4 text-slate-600 dark:text-slate-400">
                       {u.createdAt ? new Date(u.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}
                     </td>
                     <td className="p-4 text-right">
                       <button
                         onClick={() => setSelectedUser(selectedUser?.id === u.id ? null : u)}
-                        className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-all"
+                        className="text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium p-1.5 rounded-lg hover:bg-white/5 transition-all"
                       >
                         <MoreVertical className="w-4 h-4" />
                       </button>
@@ -210,7 +210,7 @@ export default function AdminUsersPage() {
         </div>
 
         {filtered.length === 0 && (
-          <div className="text-slate-500 italic py-12 text-center text-xs">No users match the current filter.</div>
+          <div className="text-slate-900 dark:text-slate-500 italic py-12 text-center text-xs">No users match the current filter.</div>
         )}
 
         {/* User Detail Panel */}
@@ -218,38 +218,38 @@ export default function AdminUsersPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 bg-slate-900 border border-white/10 rounded-3xl p-6"
+            className="mt-6 bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-3xl p-6"
           >
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xl font-black text-white">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xl font-black text-slate-950 dark:text-white font-medium">
                   {selectedUser.name?.slice(0, 2).toUpperCase()}
                 </div>
                 <div>
                   <h3 className="text-xl font-black">{selectedUser.name}</h3>
-                  <p className="text-sm text-slate-400">{selectedUser.email}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{selectedUser.email}</p>
                   <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border mt-1 inline-block ${roleColors[selectedUser.role]}`}>
                     {selectedUser.role}
                   </span>
                 </div>
               </div>
-              <button onClick={() => setSelectedUser(null)} className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/5 transition-all">✕</button>
+              <button onClick={() => setSelectedUser(null)} className="text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium p-2 rounded-xl hover:bg-white/5 transition-all">✕</button>
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-slate-950/60 border border-white/5 rounded-2xl p-4 text-center">
-                <Car className="w-5 h-5 text-cyan-400 mx-auto mb-2" />
-                <span className="text-2xl font-black text-white">{selectedUser._count?.vehicles ?? 0}</span>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">Vehicles</p>
+              <div className="bg-white shadow-sm dark:bg-slate-950/60 border border-slate-300 dark:border-white/5 rounded-2xl p-4 text-center">
+                <Car className="w-5 h-5 text-cyan-600 dark:text-cyan-400 mx-auto mb-2" />
+                <span className="text-2xl font-black text-slate-950 dark:text-white font-medium">{selectedUser._count?.vehicles ?? 0}</span>
+                <p className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold mt-1">Vehicles</p>
               </div>
-              <div className="bg-slate-950/60 border border-white/5 rounded-2xl p-4 text-center">
+              <div className="bg-white shadow-sm dark:bg-slate-950/60 border border-slate-300 dark:border-white/5 rounded-2xl p-4 text-center">
                 <Calendar className="w-5 h-5 text-emerald-400 mx-auto mb-2" />
-                <span className="text-2xl font-black text-white">{selectedUser._count?.bookings ?? 0}</span>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">Bookings</p>
+                <span className="text-2xl font-black text-slate-950 dark:text-white font-medium">{selectedUser._count?.bookings ?? 0}</span>
+                <p className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold mt-1">Bookings</p>
               </div>
-              <div className="bg-slate-950/60 border border-white/5 rounded-2xl p-4 text-center">
+              <div className="bg-white shadow-sm dark:bg-slate-950/60 border border-slate-300 dark:border-white/5 rounded-2xl p-4 text-center">
                 <CreditCard className="w-5 h-5 text-amber-400 mx-auto mb-2" />
-                <span className="text-2xl font-black text-cyan-400">{formatCurrency(selectedUser.totalSpent ?? 0)}</span>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mt-1">Total Spent</p>
+                <span className="text-2xl font-black text-cyan-600 dark:text-cyan-400">{formatCurrency(selectedUser.totalSpent ?? 0)}</span>
+                <p className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold mt-1">Total Spent</p>
               </div>
             </div>
           </motion.div>

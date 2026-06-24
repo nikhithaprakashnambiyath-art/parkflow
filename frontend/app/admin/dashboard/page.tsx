@@ -11,7 +11,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, L
 import { useRouter } from 'next/navigation';
 import { getProfile, logout } from '@/services/auth';
 import ThemeToggle from '@/components/ThemeToggle';
-import { getAdminMetrics, getRevenueReport, createLocation, addPricingRule, getPricingRules, getAllBookings, updateBookingStatus } from '@/services/admin';
+import { getAdminMetrics, getRevenueReport, createLocation, updateLocation, addPricingRule, getPricingRules, getAllBookings, updateBookingStatus } from '@/services/admin';
 import { getSlots } from '@/services/booking';
 import { useSearchStore } from '@/store/searchStore';
 import { formatCurrency } from '@/lib/utils';
@@ -47,6 +47,7 @@ export default function AdminDashboard() {
   const [newLotSlots, setNewLotSlots] = useState('20');
   const [newLotCoordinates, setNewLotCoordinates] = useState('{"lat":9.9312,"lng":76.2673}');
   const [addingLot, setAddingLot] = useState(false);
+  const [editLotId, setEditLotId] = useState('');
 
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -145,35 +146,72 @@ export default function AdminDashboard() {
     }
   };
 
-  // Create a Parking Lot location
-  const handleCreateLocation = async (e: React.FormEvent) => {
+  // Create or Edit a Parking Lot location
+  const handleSaveLocation = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newLotName || !newLotAddress || !newLotPricing || !newLotSlots) return;
+    if (!newLotName || !newLotAddress || !newLotPricing) return;
+    if (!editLotId && !newLotSlots) return;
+
     setAddingLot(true);
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      const lot = await createLocation(
-        newLotName,
-        newLotAddress,
-        parseFloat(newLotPricing),
-        parseInt(newLotSlots, 10),
-        newLotCoordinates
-      );
-      setSuccessMsg(`Location "${lot.name}" with ${newLotSlots} slots created.`);
+      if (editLotId) {
+        const lot = await updateLocation(
+          editLotId,
+          {
+            name: newLotName,
+            location: newLotAddress,
+            pricing: parseFloat(newLotPricing),
+            coordinates: newLotCoordinates,
+          }
+        );
+        setSuccessMsg(`Location "${lot.name}" updated successfully.`);
+      } else {
+        const lot = await createLocation(
+          newLotName,
+          newLotAddress,
+          parseFloat(newLotPricing),
+          parseInt(newLotSlots, 10),
+          newLotCoordinates
+        );
+        setSuccessMsg(`Location "${lot.name}" with ${newLotSlots} slots created.`);
+      }
       
       // Reset builder inputs
       setNewLotName('');
       setNewLotAddress('');
       setNewLotPricing('50');
       setNewLotSlots('20');
+      setNewLotCoordinates('{"lat":9.9312,"lng":76.2673}');
+      setEditLotId('');
       
       // Reload lot lists
       await fetchResults();
     } catch (err: any) {
-      setErrorMsg(err.message || 'Failed to create parking lot.');
+      setErrorMsg(err.message || 'Failed to save parking lot.');
     } finally {
       setAddingLot(false);
+    }
+  };
+
+  const handleSelectLotForEdit = (lotId: string) => {
+    setEditLotId(lotId);
+    if (lotId) {
+      const lot = results.find(r => r.id === lotId);
+      if (lot) {
+        setNewLotName(lot.name);
+        setNewLotAddress(lot.location);
+        setNewLotPricing(lot.basePricePerHour?.toString() || '50');
+        setNewLotSlots(lot._count?.slots?.toString() || '0');
+        setNewLotCoordinates(lot.coordinates || '{"lat":9.9312,"lng":76.2673}');
+      }
+    } else {
+      setNewLotName('');
+      setNewLotAddress('');
+      setNewLotPricing('50');
+      setNewLotSlots('20');
+      setNewLotCoordinates('{"lat":9.9312,"lng":76.2673}');
     }
   };
 
@@ -194,26 +232,26 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
-        <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Syncing Admin Workspace...</span>
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-10 h-10 text-cyan-600 dark:text-cyan-400 animate-spin" />
+        <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Syncing Admin Workspace...</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex selection:bg-cyan-500/30 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex selection:bg-cyan-500/30 relative overflow-hidden">
       
       {/* Sidebar background ambient */}
       <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Sidebar Navigation */}
-      <aside className="w-64 border-r border-white/10 bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
+      <aside className="w-64 border-r border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
         <div className="flex items-center gap-2.5 mb-12 cursor-pointer" onClick={() => router.push('/')}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(0,217,255,0.4)] animate-pulse">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium shadow-[0_0_15px_rgba(0,217,255,0.4)] animate-pulse">
             PF
           </div>
-          <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-cyan-400 text-xs uppercase block tracking-wider font-bold">Admin Panel</span></span>
+          <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-cyan-600 dark:text-cyan-400 text-xs uppercase block tracking-wider font-bold">Admin Panel</span></span>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -240,8 +278,8 @@ export default function AdminDashboard() {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                 activeTab === item.id 
-                  ? 'bg-cyan-500/10 text-cyan-400 font-bold' 
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold' 
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5'
               }`}
             >
               <item.icon className="w-4.5 h-4.5" />
@@ -267,12 +305,12 @@ export default function AdminDashboard() {
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-3xl font-black mb-1">Control Console</h1>
-            <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">System Auditor: {adminUser?.name || 'Administrator'}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest font-bold">System Auditor: {adminUser?.name || 'Administrator'}</p>
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <div className="px-4 py-2 bg-slate-900 border border-white/10 text-xs font-bold text-cyan-400 rounded-xl flex items-center gap-2">
-              <Activity className="w-4 h-4 text-cyan-400" /> Operational Live
+            <div className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 text-xs font-bold text-cyan-600 dark:text-cyan-400 rounded-xl flex items-center gap-2">
+              <Activity className="w-4 h-4 text-cyan-600 dark:text-cyan-400" /> Operational Live
             </div>
           </div>
         </header>
@@ -302,47 +340,74 @@ export default function AdminDashboard() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               
               {/* Revenue */}
-              <div className="bg-slate-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden">
-                <DollarSign className="absolute top-4 right-4 w-12 h-12 text-cyan-400/10" />
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Gross Revenues</span>
-                <h3 className="text-3xl font-black text-white">{formatCurrency(metrics.totalRevenue || 0)}</h3>
+              <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-6 rounded-3xl relative overflow-hidden">
+                <DollarSign className="absolute top-4 right-4 w-12 h-12 text-cyan-600 dark:text-cyan-400/10" />
+                <span className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Gross Revenues</span>
+                <h3 className="text-3xl font-black text-slate-950 dark:text-white font-medium">{formatCurrency(metrics.totalRevenue || 0)}</h3>
                 <span className="text-[10px] text-emerald-400 font-bold block mt-1">+14% vs last week</span>
               </div>
 
               {/* Booking audits */}
-              <div className="bg-slate-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden">
-                <Calendar className="absolute top-4 right-4 w-12 h-12 text-cyan-400/10" />
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block mb-1.5">System Bookings</span>
-                <h3 className="text-3xl font-black text-white">{metrics.totalBookings || 84}</h3>
-                <span className="text-[10px] text-slate-400 font-bold block mt-1">{metrics.activeBookings || 6} active now</span>
+              <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-6 rounded-3xl relative overflow-hidden">
+                <Calendar className="absolute top-4 right-4 w-12 h-12 text-cyan-600 dark:text-cyan-400/10" />
+                <span className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold block mb-1.5">System Bookings</span>
+                <h3 className="text-3xl font-black text-slate-950 dark:text-white font-medium">{metrics.totalBookings || 84}</h3>
+                <span className="text-[10px] text-slate-600 dark:text-slate-400 font-bold block mt-1">{metrics.activeBookings || 6} active now</span>
               </div>
 
               {/* Occupancy */}
-              <div className="bg-slate-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden">
-                <Grid className="absolute top-4 right-4 w-12 h-12 text-cyan-400/10" />
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Average Occupancy</span>
-                <h3 className="text-3xl font-black text-white">{(metrics.occupancyRate || 42.5).toFixed(1)}%</h3>
-                <div className="w-full bg-slate-950 h-1 rounded-full mt-2.5 overflow-hidden">
+              <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-6 rounded-3xl relative overflow-hidden">
+                <Grid className="absolute top-4 right-4 w-12 h-12 text-cyan-600 dark:text-cyan-400/10" />
+                <span className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Average Occupancy</span>
+                <h3 className="text-3xl font-black text-slate-950 dark:text-white font-medium">{(metrics.occupancyRate || 42.5).toFixed(1)}%</h3>
+                <div className="w-full bg-slate-100 dark:bg-slate-950 h-1 rounded-full mt-2.5 overflow-hidden">
                   <div className="h-full bg-cyan-400" style={{ width: `${metrics.occupancyRate || 42.5}%` }} />
                 </div>
               </div>
 
               {/* Locations */}
-              <div className="bg-slate-900 border border-white/5 p-6 rounded-3xl relative overflow-hidden">
-                <MapPin className="absolute top-4 right-4 w-12 h-12 text-cyan-400/10" />
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Managed Lots</span>
-                <h3 className="text-3xl font-black text-white">{metrics.totalLots || 20}</h3>
-                <span className="text-[10px] text-cyan-400 font-bold block mt-1">3 major metro cities</span>
+              <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-6 rounded-3xl relative overflow-hidden">
+                <MapPin className="absolute top-4 right-4 w-12 h-12 text-cyan-600 dark:text-cyan-400/10" />
+                <span className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold block mb-1.5">Managed Lots</span>
+                <h3 className="text-3xl font-black text-slate-950 dark:text-white font-medium">{metrics.totalLots || 20}</h3>
+                <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold block mt-1">3 major metro cities</span>
               </div>
 
+            </div>
+
+            {/* AI Insights & Predictions */}
+            <div className="bg-gradient-to-br from-indigo-900/50 to-slate-900 border border-indigo-500/20 rounded-3xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none" />
+              <div className="flex items-center gap-2 mb-6">
+                <Sparkles className="w-5 h-5 text-indigo-400" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">AI Predictive Insights</h3>
+                <div className="ml-auto px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] font-black uppercase tracking-wider">ParkFlow Brain</div>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-6 relative z-10">
+                <div className="bg-slate-950/50 border border-slate-300 dark:border-white/5 p-5 rounded-2xl">
+                  <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest mb-2">Demand Forecast</p>
+                  <p className="text-lg font-black text-slate-950 dark:text-white font-medium">Surge Expected</p>
+                  <p className="text-xs text-rose-400 mt-1 font-medium leading-relaxed">Model predicts 25% increase in demand at Lulu Mall between 4PM-8PM.</p>
+                </div>
+                <div className="bg-slate-950/50 border border-slate-300 dark:border-white/5 p-5 rounded-2xl">
+                  <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest mb-2">Pricing Optimization</p>
+                  <p className="text-lg font-black text-slate-950 dark:text-white font-medium">Underpriced: 3 Lots</p>
+                  <p className="text-xs text-amber-400 mt-1 font-medium leading-relaxed">Consider enabling dynamic 1.5x multiplier for Kozhikode Beach lots.</p>
+                </div>
+                <div className="bg-slate-950/50 border border-slate-300 dark:border-white/5 p-5 rounded-2xl border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                  <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest mb-2">Anomaly Detection</p>
+                  <p className="text-lg font-black text-slate-950 dark:text-white font-medium">1 Sensor Alert</p>
+                  <p className="text-xs text-indigo-400 mt-1 font-medium leading-relaxed">Slot A4 at MG Road reporting false occupancy for &gt; 24hrs.</p>
+                </div>
+              </div>
             </div>
 
             {/* Split charts grid */}
             <div className="grid lg:grid-cols-3 gap-8">
               
               {/* Gross revenue report bar chart */}
-              <div className="lg:col-span-2 bg-slate-900 border border-white/5 rounded-3xl p-6 flex flex-col min-h-[300px]">
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-slate-300">Revenue Performance by Lot</h3>
+              <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl p-6 flex flex-col min-h-[300px]">
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-slate-700 dark:text-slate-300">Revenue Performance by Lot</h3>
                 <div className="flex-1">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={revenueData}>
@@ -357,13 +422,13 @@ export default function AdminDashboard() {
               </div>
 
               {/* Recent Action logs */}
-              <div className="bg-slate-900 border border-white/5 rounded-3xl p-6">
-                <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-slate-300">Operational Log</h3>
+              <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl p-6">
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-slate-700 dark:text-slate-300">Operational Log</h3>
                 <div className="space-y-4">
                   {metrics.recentActivity.map((act: any) => (
                     <div key={act.id} className="border-l-2 border-cyan-400 pl-4 py-1">
-                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">{act.action}</span>
-                      <p className="text-xs text-slate-300 leading-normal mt-0.5">{act.details}</p>
+                      <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block">{act.action}</span>
+                      <p className="text-xs text-slate-700 dark:text-slate-300 leading-normal mt-0.5">{act.details}</p>
                     </div>
                   ))}
                 </div>
@@ -383,14 +448,14 @@ export default function AdminDashboard() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
               <div>
                 <h2 className="text-xl font-black">Parking Slots Manager</h2>
-                <p className="text-xs text-slate-400 mt-1">Review live sensor occupation states and block slots for maintenance.</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Review live sensor occupation states and block slots for maintenance.</p>
               </div>
 
               {/* Lot selector dropdown */}
               <select
                 value={selectedLotId}
                 onChange={(e) => setSelectedLotId(e.target.value)}
-                className="bg-slate-900 border border-white/10 text-xs font-bold rounded-xl px-4 py-3 outline-none text-cyan-400"
+                className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 text-xs font-bold rounded-xl px-4 py-3 outline-none text-cyan-600 dark:text-cyan-400"
               >
                 {results.map(lot => (
                   <option key={lot.id} value={lot.id}>{lot.name}</option>
@@ -398,16 +463,16 @@ export default function AdminDashboard() {
               </select>
             </div>
 
-            <div className="bg-slate-900 border border-white/5 p-6 rounded-3xl">
+            <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-6 rounded-3xl">
               <div className="flex justify-between items-center mb-6">
-                <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Visual Floor Map</span>
-                <span className="text-xs font-bold text-slate-300">{slots.length} Total slots mapped</span>
+                <span className="text-xs text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider">Visual Floor Map</span>
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{slots.length} Total slots mapped</span>
               </div>
 
               {loadingSlots ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-3">
-                  <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
-                  <span className="text-xs text-slate-400">Querying live sensor values...</span>
+                  <Loader2 className="w-8 h-8 text-cyan-600 dark:text-cyan-400 animate-spin" />
+                  <span className="text-xs text-slate-600 dark:text-slate-400">Querying live sensor values...</span>
                 </div>
               ) : (
                 <div className="grid grid-cols-4 sm:grid-cols-8 gap-4">
@@ -415,14 +480,14 @@ export default function AdminDashboard() {
                     const isOccupied = slot.status === 'BOOKED';
                     const isMaintenance = slot.status === 'MAINTENANCE';
                     let statusLabel = 'Available';
-                    let style = 'border-slate-800 text-slate-400 hover:border-white/20';
+                    let style = 'border-slate-800 text-slate-600 dark:text-slate-400 hover:border-white/20';
                     
                     if (isOccupied) {
                       statusLabel = 'Occupied';
                       style = 'border-rose-500/20 bg-rose-500/5 text-rose-400';
                     } else if (isMaintenance) {
                       statusLabel = 'Blocked';
-                      style = 'border-slate-950 bg-slate-950 text-slate-600';
+                      style = 'border-slate-950 bg-slate-100 dark:bg-slate-950 text-slate-600';
                     } else {
                       style = 'border-emerald-500/20 bg-emerald-500/5 text-emerald-400';
                     }
@@ -454,16 +519,16 @@ export default function AdminDashboard() {
             <div className="md:col-span-1 space-y-6">
               <div>
                 <h2 className="text-xl font-black">Pricing Rules</h2>
-                <p className="text-xs text-slate-400 mt-1">Configure multiplier weights dynamically to auto-adjust rates during peak hours.</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Configure multiplier weights dynamically to auto-adjust rates during peak hours.</p>
               </div>
 
-              <form onSubmit={handleAddPricingRule} className="bg-slate-900 border border-white/10 rounded-2xl p-6 space-y-4">
+              <form onSubmit={handleAddPricingRule} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl p-6 space-y-4">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Select Target Lot</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Select Target Lot</label>
                   <select
                     value={selectedLotId}
                     onChange={(e) => setSelectedLotId(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3 text-xs text-slate-300 focus:outline-none"
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3 text-xs text-slate-700 dark:text-slate-300 focus:outline-none"
                   >
                     {results.map(lot => (
                       <option key={lot.id} value={lot.id}>{lot.name}</option>
@@ -472,7 +537,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Price Multiplier (e.g. 1.5x)</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Price Multiplier (e.g. 1.5x)</label>
                   <input
                     type="number"
                     step="0.1"
@@ -481,31 +546,31 @@ export default function AdminDashboard() {
                     required
                     value={newMultiplier}
                     onChange={(e) => setNewMultiplier(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Start Peak Hour</label>
+                    <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Start Peak Hour</label>
                     <input
                       type="text"
                       placeholder="17:00"
                       required
                       value={newStartTime}
                       onChange={(e) => setNewStartTime(e.target.value)}
-                      className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-slate-100 dark:bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">End Peak Hour</label>
+                    <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">End Peak Hour</label>
                     <input
                       type="text"
                       placeholder="21:00"
                       required
                       value={newEndTime}
                       onChange={(e) => setNewEndTime(e.target.value)}
-                      className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                      className="w-full bg-slate-100 dark:bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                     />
                   </div>
                 </div>
@@ -523,22 +588,22 @@ export default function AdminDashboard() {
 
             {/* Right side: active rule lists */}
             <div className="md:col-span-2 space-y-4">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Active Rules List ({pricingRules.length})</span>
+              <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block">Active Rules List ({pricingRules.length})</span>
               {pricingRules.length === 0 ? (
-                <div className="bg-slate-900/20 border border-white/5 rounded-2xl p-8 text-center text-slate-500 italic text-xs">
+                <div className="bg-slate-900/20 border border-slate-300 dark:border-white/5 rounded-2xl p-8 text-center text-slate-900 dark:text-slate-500 italic text-xs">
                   No pricing overrides defined. Using standard hourly rates.
                 </div>
               ) : (
                 <div className="space-y-3">
                   {pricingRules.map((rule) => (
-                    <div key={rule.id} className="flex justify-between items-center bg-slate-900 border border-white/5 p-4 rounded-2xl">
+                    <div key={rule.id} className="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-4 rounded-2xl">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-950 border border-white/5 flex items-center justify-center text-cyan-400 font-bold text-xs">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/5 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-bold text-xs">
                           {rule.multiplier}x
                         </div>
                         <div>
                           <span className="text-xs font-bold text-slate-200 block">Peak pricing multiplier</span>
-                          <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1.5 mt-0.5"><Clock className="w-3.5 h-3.5" /> Time frame: {rule.startTime} to {rule.endTime}</span>
+                          <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold flex items-center gap-1.5 mt-0.5"><Clock className="w-3.5 h-3.5" /> Time frame: {rule.startTime} to {rule.endTime}</span>
                         </div>
                       </div>
                       <span className="text-[10px] font-black text-emerald-400 uppercase">Multiplier Active</span>
@@ -557,67 +622,84 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl space-y-6"
           >
-            <div>
-              <h2 className="text-xl font-black">Location Setup</h2>
-              <p className="text-xs text-slate-400 mt-1">Register new facilities, configure coordinates and slot volumes dynamically.</p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-xl font-black">Location Setup</h2>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Register new facilities or edit existing ones.</p>
+              </div>
+              
+              <div className="w-64">
+                <select
+                  value={editLotId}
+                  onChange={(e) => handleSelectLotForEdit(e.target.value)}
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/15 focus:border-cyan-500/50 rounded-xl py-2 px-3 text-xs text-slate-700 dark:text-slate-300 focus:outline-none"
+                >
+                  <option value="">-- Create New Hub --</option>
+                  {results.map(lot => (
+                    <option key={lot.id} value={lot.id}>Edit: {lot.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <form onSubmit={handleCreateLocation} className="bg-slate-900 border border-white/10 rounded-3xl p-6 space-y-4">
+            <form onSubmit={handleSaveLocation} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-3xl p-6 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Parking Lot Name</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Parking Lot Name</label>
                   <input
                     type="text"
                     required
                     value={newLotName}
                     onChange={(e) => setNewLotName(e.target.value)}
                     placeholder="Grand Mall Multi-Level Lot"
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Address / City Location</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Address / City Location</label>
                   <input
                     type="text"
                     required
                     value={newLotAddress}
                     onChange={(e) => setNewLotAddress(e.target.value)}
                     placeholder="Bandra Kurla Complex, Mumbai, 400051"
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Base Hourly Pricing (INR)</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Base Hourly Pricing (INR)</label>
                   <input
                     type="number"
                     required
                     value={newLotPricing}
                     onChange={(e) => setNewLotPricing(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Total Slot Capacity</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Total Slot Capacity</label>
                   <input
                     type="number"
                     max="100"
-                    required
+                    required={!editLotId}
+                    disabled={!!editLotId}
                     value={newLotSlots}
                     onChange={(e) => setNewLotSlots(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                    title={editLotId ? "Slot capacity cannot be edited directly for existing hubs" : ""}
+                    className={`w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none ${editLotId ? 'opacity-50 cursor-not-allowed' : ''}`}
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Geographical Coordinates (JSON)</label>
+                  <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Geographical Coordinates (JSON)</label>
                   <input
                     type="text"
                     required
                     value={newLotCoordinates}
                     onChange={(e) => setNewLotCoordinates(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                    className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                   />
                 </div>
               </div>
@@ -627,8 +709,8 @@ export default function AdminDashboard() {
                 disabled={addingLot}
                 className="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3.5 rounded-xl text-xs flex gap-1 justify-center items-center shadow-lg shadow-cyan-500/10 mt-6 disabled:opacity-50 disabled:pointer-events-none transition-colors"
               >
-                {addingLot ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                <span>Create Facilities Location</span>
+                {addingLot ? <Loader2 className="w-4 h-4 animate-spin" /> : (editLotId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />)}
+                <span>{editLotId ? 'Save Changes' : 'Create Facilities Location'}</span>
               </button>
             </form>
           </motion.div>
@@ -643,22 +725,22 @@ export default function AdminDashboard() {
           >
             <div>
               <h2 className="text-xl font-black">Audit Reservations logs</h2>
-              <p className="text-xs text-slate-400 mt-1">Review system reservations and manage cancellations or check-in overrides manually.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Review system reservations and manage cancellations or check-in overrides manually.</p>
             </div>
 
-            <div className="bg-slate-900 border border-white/5 rounded-3xl overflow-hidden shadow-xl">
-              <div className="p-4 border-b border-white/5 bg-slate-900/60 flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-300">Auditor Table</span>
-                <span className="text-xs font-semibold text-slate-500">{bookings.length} reservations logged</span>
+            <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl overflow-hidden shadow-xl">
+              <div className="p-4 border-b border-slate-300 dark:border-white/5 bg-white shadow-sm dark:bg-slate-900/60 flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Auditor Table</span>
+                <span className="text-xs font-semibold text-slate-900 dark:text-slate-500">{bookings.length} reservations logged</span>
               </div>
 
               {bookings.length === 0 ? (
-                <div className="text-slate-500 italic py-12 text-center text-xs">No user bookings in database. Check-ins simulate dynamically in customer portals.</div>
+                <div className="text-slate-900 dark:text-slate-500 italic py-12 text-center text-xs">No user bookings in database. Check-ins simulate dynamically in customer portals.</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
-                      <tr className="border-b border-white/5 text-slate-500 font-bold uppercase tracking-wider">
+                      <tr className="border-b border-slate-300 dark:border-white/5 text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider">
                         <th className="p-4">ID</th>
                         <th className="p-4">Customer Email</th>
                         <th className="p-4">Facilities / Spot</th>
@@ -671,13 +753,13 @@ export default function AdminDashboard() {
                     <tbody className="divide-y divide-white/5">
                       {bookings.map((booking) => (
                         <tr key={booking.id} className="hover:bg-white/2 transition-colors">
-                          <td className="p-4 font-mono font-bold text-slate-400">{booking.id.substring(0, 8)}</td>
+                          <td className="p-4 font-mono font-bold text-slate-600 dark:text-slate-400">{booking.id.substring(0, 8)}</td>
                           <td className="p-4 font-medium text-slate-200">{booking.user?.email || 'customer@example.com'}</td>
-                          <td className="p-4 text-slate-300">
-                            {booking.slot?.lot?.name} • <span className="uppercase text-cyan-400 font-bold">{booking.slot?.name}</span>
+                          <td className="p-4 text-slate-700 dark:text-slate-300">
+                            {booking.slot?.lot?.name} • <span className="uppercase text-cyan-600 dark:text-cyan-400 font-bold">{booking.slot?.name}</span>
                           </td>
-                          <td className="p-4 text-cyan-400 font-black">{formatCurrency(booking.amount)}</td>
-                          <td className="p-4 text-slate-400 text-[10px] font-semibold">
+                          <td className="p-4 text-cyan-600 dark:text-cyan-400 font-black">{formatCurrency(booking.amount)}</td>
+                          <td className="p-4 text-slate-600 dark:text-slate-400 text-[10px] font-semibold">
                             {new Date(booking.startTime).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit' })} to {new Date(booking.endTime).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                           </td>
                           <td className="p-4">

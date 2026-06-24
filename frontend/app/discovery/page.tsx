@@ -10,7 +10,7 @@ export default function DiscoveryRedirect() {
   }, [router]);
 
   return (
-    <div className="h-screen w-full flex bg-slate-950 text-slate-50 items-center justify-center font-bold text-sm tracking-widest uppercase">
+    <div className="h-screen w-full flex bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 items-center justify-center font-bold text-sm tracking-widest uppercase">
       Redirecting to ParkFlow AI Discovery...
     </div>
   );

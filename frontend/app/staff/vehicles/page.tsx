@@ -56,16 +56,16 @@ export default function StaffVehiclesPage() {
   const normal = vehicles.filter(v => v.status === "NORMAL").length;
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
+      <Loader2 className="w-10 h-10 text-cyan-600 dark:text-cyan-400 animate-spin" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex selection:bg-cyan-500/30">
-      <aside className="w-64 border-r border-white/10 bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex selection:bg-cyan-500/30">
+      <aside className="w-64 border-r border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
         <div className="flex items-center gap-2.5 mb-10 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-white">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium">
             <span className="text-xs font-black">PF</span>
           </div>
           <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-emerald-400 text-xs block font-bold">Staff</span></span>
@@ -78,7 +78,7 @@ export default function StaffVehiclesPage() {
             { label: "Vehicle Monitoring", path: "/staff/vehicles", icon: Car, active: true },
           ].map((item) => (
             <button key={item.path} onClick={() => router.push(item.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${(item as any).active ? "bg-emerald-500/10 text-emerald-400" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${(item as any).active ? "bg-emerald-500/10 text-emerald-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5"}`}>
               <item.icon className="w-4 h-4" /> {item.label}
             </button>
           ))}
@@ -91,7 +91,7 @@ export default function StaffVehiclesPage() {
       <main className="flex-1 p-8 lg:p-10 overflow-y-auto">
         <header className="mb-8">
           <h1 className="text-3xl font-black">Vehicle Monitoring</h1>
-          <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Live tracking of vehicles on lot</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest font-bold mt-1">Live tracking of vehicles on lot</p>
         </header>
 
         {/* Stats */}
@@ -102,10 +102,10 @@ export default function StaffVehiclesPage() {
             { label: "Overstayed", value: overstayed, color: "rose", icon: AlertTriangle },
           ].map((stat, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-              className="bg-slate-900 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-              <stat.icon className={`absolute top-4 right-4 w-10 h-10 opacity-10 ${stat.color === "cyan" ? "text-cyan-400" : stat.color === "emerald" ? "text-emerald-400" : "text-rose-400"}`} />
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block mb-1">{stat.label}</span>
-              <span className={`text-3xl font-black ${stat.color === "cyan" ? "text-cyan-400" : stat.color === "emerald" ? "text-emerald-400" : "text-rose-400"}`}>{stat.value}</span>
+              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-2xl p-5 relative overflow-hidden">
+              <stat.icon className={`absolute top-4 right-4 w-10 h-10 opacity-10 ${stat.color === "cyan" ? "text-cyan-600 dark:text-cyan-400" : stat.color === "emerald" ? "text-emerald-400" : "text-rose-400"}`} />
+              <span className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold block mb-1">{stat.label}</span>
+              <span className={`text-3xl font-black ${stat.color === "cyan" ? "text-cyan-600 dark:text-cyan-400" : stat.color === "emerald" ? "text-emerald-400" : "text-rose-400"}`}>{stat.value}</span>
             </motion.div>
           ))}
         </div>
@@ -121,14 +121,14 @@ export default function StaffVehiclesPage() {
         {/* Filter + Search */}
         <div className="flex gap-4 mb-6">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900 dark:text-slate-500" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by plate, owner, or lot..."
-              className="w-full bg-slate-900 border border-white/10 focus:border-emerald-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none transition-all" />
+              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 focus:border-emerald-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-950 dark:text-white font-medium focus:outline-none transition-all" />
           </div>
           <div className="flex gap-2">
             {(["ALL", "NORMAL", "OVERSTAYED"] as const).map(f => (
               <button key={f} onClick={() => setFilter(f)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${filter === f ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "border-white/5 text-slate-400 hover:border-white/15"}`}>
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${filter === f ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "border-slate-300 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-white/15"}`}>
                 {f}
               </button>
             ))}
@@ -139,11 +139,11 @@ export default function StaffVehiclesPage() {
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((v, i) => (
             <motion.div key={v.plate} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className={`rounded-2xl border p-5 transition-all ${v.status === "OVERSTAYED" ? "bg-rose-500/5 border-rose-500/20" : "bg-slate-900 border-white/5 hover:border-white/10"}`}>
+              className={`rounded-2xl border p-5 transition-all ${v.status === "OVERSTAYED" ? "bg-rose-500/5 border-rose-500/20" : "bg-white dark:bg-slate-900 border-slate-300 dark:border-white/5 hover:border-slate-300 dark:border-white/10"}`}>
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <p className="font-mono text-lg font-black text-white tracking-wider">{v.plate}</p>
-                  <p className="text-xs text-slate-400">{v.type} · {v.owner}</p>
+                  <p className="font-mono text-lg font-black text-slate-950 dark:text-white font-medium tracking-wider">{v.plate}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">{v.type} · {v.owner}</p>
                 </div>
                 <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border ${v.status === "OVERSTAYED" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"}`}>
                   {v.status}
@@ -151,14 +151,14 @@ export default function StaffVehiclesPage() {
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2 text-slate-400">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400" /> {v.lot} · Slot {v.slot}
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> {v.lot} · Slot {v.slot}
                 </div>
-                <div className="flex items-center gap-2 text-slate-400">
-                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> On lot for: <span className="text-white font-bold">{getElapsed(v.entryTime)}</span>
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> On lot for: <span className="text-slate-950 dark:text-white font-medium font-bold">{getElapsed(v.entryTime)}</span>
                 </div>
-                <div className={`flex items-center gap-2 font-bold ${v.status === "OVERSTAYED" ? "text-rose-400" : "text-slate-300"}`}>
-                  <AlertTriangle className={`w-3.5 h-3.5 ${v.status === "OVERSTAYED" ? "text-rose-400" : "text-slate-500"}`} />
+                <div className={`flex items-center gap-2 font-bold ${v.status === "OVERSTAYED" ? "text-rose-400" : "text-slate-700 dark:text-slate-300"}`}>
+                  <AlertTriangle className={`w-3.5 h-3.5 ${v.status === "OVERSTAYED" ? "text-rose-400" : "text-slate-900 dark:text-slate-500"}`} />
                   {getTimeRemaining(v.expectedExit)}
                 </div>
               </div>

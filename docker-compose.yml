@@ -7,12 +7,17 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: parkflow_db
+      POSTGRES_PASSWORD: park123
+      POSTGRES_DB: parkflow
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -21,13 +26,15 @@ services:
     container_name: parkflow-backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: "postgresql://postgres:postgrespassword@postgres:5432/parkflow_db?schema=public"
+      DATABASE_URL: "postgresql://postgres:park123@postgres:5432/parkflow"
       PORT: 3001
       JWT_SECRET: "super-secret-key-change-in-production"
+      FRONTEND_URL: "http://localhost:3000"
     ports:
       - "3001:3001"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:

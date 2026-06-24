@@ -96,18 +96,18 @@ export default function PricingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 selection:bg-cyan-500/30">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-slate-300 dark:border-white/10">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(0,217,255,0.5)]">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium shadow-[0_0_15px_rgba(0,217,255,0.5)]">
             <span className="text-xs">PF</span>
           </div>
-          <span className="text-xl font-bold tracking-tight">ParkFlow <span className="text-cyan-400">AI</span></span>
+          <span className="text-xl font-bold tracking-tight">ParkFlow <span className="text-cyan-600 dark:text-cyan-400">AI</span></span>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={() => router.push("/features")} className="text-sm text-slate-300 hover:text-cyan-400 transition-colors hidden md:block">Features</button>
-          <button onClick={() => router.push("/contact")} className="text-sm text-slate-300 hover:text-cyan-400 transition-colors hidden md:block">Contact</button>
+          <button onClick={() => router.push("/features")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors hidden md:block">Features</button>
+          <button onClick={() => router.push("/contact")} className="text-sm text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors hidden md:block">Contact</button>
           <button
             onClick={() => router.push("/login")}
             className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-colors"
@@ -122,12 +122,12 @@ export default function PricingPage() {
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none" />
         <div className="container mx-auto px-6 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <span className="text-xs text-cyan-400 font-bold uppercase tracking-widest block mb-4">Simple, transparent pricing</span>
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest block mb-4">Simple, transparent pricing</span>
             <h1 className="text-5xl lg:text-6xl font-black tracking-tight mb-4">
               Plans for every<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">driver & operator</span>
             </h1>
-            <p className="text-lg text-slate-400 max-w-xl mx-auto">
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
               Start free, scale as you grow. No hidden fees, no long-term commitments.
             </p>
           </motion.div>
@@ -135,7 +135,7 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing Cards */}
-      <section className="py-12 border-t border-white/5">
+      <section className="py-12 border-t border-slate-300 dark:border-white/5">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {plans.map((plan, i) => (
@@ -147,7 +147,7 @@ export default function PricingPage() {
                 className={`relative rounded-3xl p-7 border transition-all ${
                   plan.popular
                     ? "bg-gradient-to-b from-cyan-500/15 to-slate-900 border-cyan-500/40 shadow-[0_0_40px_rgba(0,217,255,0.1)]"
-                    : "bg-slate-900/60 border-white/10"
+                    : "bg-white shadow-sm dark:bg-slate-900/60 border-slate-300 dark:border-white/10"
                 }`}
               >
                 {plan.popular && (
@@ -160,19 +160,19 @@ export default function PricingPage() {
 
                 <div className="mb-6">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${
-                    plan.color === 'cyan' ? 'bg-cyan-500/15 text-cyan-400' :
+                    plan.color === 'cyan' ? 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400' :
                     plan.color === 'indigo' ? 'bg-indigo-500/15 text-indigo-400' :
-                    'bg-slate-700/60 text-slate-300'
+                    'bg-slate-700/60 text-slate-700 dark:text-slate-300'
                   }`}>
                     <plan.icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-xl font-black mb-1">{plan.name}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">{plan.description}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{plan.description}</p>
                 </div>
 
                 <div className="mb-6">
-                  <span className={`text-4xl font-black ${plan.popular ? 'text-cyan-400' : 'text-white'}`}>{plan.price}</span>
-                  <span className="text-slate-400 text-sm ml-2">/ {plan.period}</span>
+                  <span className={`text-4xl font-black ${plan.popular ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-950 dark:text-white font-medium'}`}>{plan.price}</span>
+                  <span className="text-slate-600 dark:text-slate-400 text-sm ml-2">/ {plan.period}</span>
                 </div>
 
                 <button
@@ -180,7 +180,7 @@ export default function PricingPage() {
                   className={`w-full py-3.5 rounded-xl font-bold text-sm mb-6 transition-all flex items-center gap-2 justify-center ${
                     plan.popular
                       ? "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-[0_0_20px_rgba(0,217,255,0.25)]"
-                      : "border border-white/15 text-slate-300 hover:bg-white/5"
+                      : "border border-white/15 text-slate-700 dark:text-slate-300 hover:bg-white/5"
                   }`}
                 >
                   {plan.cta} <ArrowRight className="w-4 h-4" />
@@ -189,8 +189,8 @@ export default function PricingPage() {
                 <div className="space-y-2.5">
                   {plan.features.map((f, j) => (
                     <div key={j} className="flex items-start gap-2.5 text-sm">
-                      <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${plan.popular ? 'text-cyan-400' : 'text-emerald-400'}`} />
-                      <span className="text-slate-300">{f}</span>
+                      <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${plan.popular ? 'text-cyan-600 dark:text-cyan-400' : 'text-emerald-400'}`} />
+                      <span className="text-slate-700 dark:text-slate-300">{f}</span>
                     </div>
                   ))}
                 </div>
@@ -201,11 +201,11 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24 border-t border-white/5">
+      <section className="py-24 border-t border-slate-300 dark:border-white/5">
         <div className="container mx-auto px-6 max-w-3xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black mb-3">Frequently Asked Questions</h2>
-            <p className="text-slate-400">Everything you need to know about ParkFlow AI pricing.</p>
+            <p className="text-slate-600 dark:text-slate-400">Everything you need to know about ParkFlow AI pricing.</p>
           </div>
           <div className="space-y-4">
             {faq.map((item, i) => (
@@ -215,10 +215,10 @@ export default function PricingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="bg-slate-900/60 border border-white/5 rounded-2xl p-6"
+                className="bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/5 rounded-2xl p-6"
               >
-                <h3 className="font-bold text-white mb-2">{item.q}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{item.a}</p>
+                <h3 className="font-bold text-slate-950 dark:text-white font-medium mb-2">{item.q}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.a}</p>
               </motion.div>
             ))}
           </div>

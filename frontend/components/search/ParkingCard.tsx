@@ -8,8 +8,10 @@ import {
   HelpCircle,
   ArrowRight,
   Trophy,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearchStore, ParkingLot } from "@/store/searchStore";
 import { formatCurrency, formatDistance } from "@/lib/utils";
@@ -28,8 +30,9 @@ export function ParkingCard({
   isRecommended = false,
 }: ParkingCardProps) {
   const router = useRouter();
-  const { selectedSpot, setSelectedSpot } = useSearchStore();
+  const { selectedSpot, setSelectedSpot, favorites, toggleFavorite } = useSearchStore();
   const isSelected = selectedSpot?.id === spot.id;
+  const isFav = favorites.includes(spot.id);
 
   const handleSelect = () => {
     setSelectedSpot(spot);
@@ -51,12 +54,12 @@ export function ParkingCard({
       onClick={handleSelect}
       className={`relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col gap-3 group ${
         isRecommended
-          ? "bg-slate-900 border-amber-500 shadow-[0_0_20px_rgba(251,146,60,0.2)]"
+          ? "bg-white dark:bg-slate-900 border-amber-500 shadow-[0_0_20px_rgba(251,146,60,0.2)]"
           : isSelected
-            ? "bg-slate-900 border-cyan-500 shadow-[0_0_20px_rgba(0,217,255,0.15)]"
+            ? "bg-white dark:bg-slate-900 border-cyan-500 shadow-[0_0_20px_rgba(0,217,255,0.15)]"
             : isHovered
-              ? "bg-slate-900/80 border-white/20 shadow-lg"
-              : "bg-slate-950/40 border-white/5 hover:border-white/10"
+              ? "bg-white shadow-sm dark:bg-slate-900/80 border-white/20 shadow-lg"
+              : "bg-white shadow-sm dark:bg-slate-950/40 border-slate-300 dark:border-white/5 hover:border-slate-300 dark:border-white/10"
       }`}
     >
       {/* Recommended badge glow line */}
@@ -81,17 +84,26 @@ export function ParkingCard({
 
       <div className="flex gap-4">
         {/* Spot Image */}
-        <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/10">
-          <img
+        <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10">
+          <Image
             src={
               spot.image ||
               "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?q=80&w=600&auto=format&fit=crop"
             }
             alt={spot.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            sizes="(max-width: 768px) 100vw, 96px"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
+          {/* Favorite Button Overlay */}
+          <button
+            onClick={(e) => { e.stopPropagation(); toggleFavorite(spot.id); }}
+            className={`absolute top-1 left-1 p-1 rounded-full backdrop-blur-md transition-all ${isFav ? 'bg-rose-500/20 text-rose-500' : 'bg-white shadow-sm dark:bg-slate-950/60 text-slate-700 dark:text-slate-300 hover:text-rose-400 hover:bg-white dark:bg-slate-900'}`}
+          >
+            <Heart className={`w-3 h-3 ${isFav ? 'fill-current' : ''}`} />
+          </button>
           {/* Price Tag Overlay for mobile/fast view */}
-          <div className="absolute bottom-1 right-1 bg-slate-950/80 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-bold text-cyan-400">
+          <div className="absolute bottom-1 right-1 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-bold text-cyan-600 dark:text-cyan-400">
             {formatCurrency(spot.pricing)}/hr
           </div>
         </div>
@@ -100,7 +112,7 @@ export function ParkingCard({
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             <div className="flex items-start justify-between gap-1">
-              <h4 className="font-bold text-sm text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
+              <h4 className="font-bold text-sm text-slate-100 truncate group-hover:text-cyan-600 dark:text-cyan-400 transition-colors">
                 {spot.name}
               </h4>
               <div className="flex items-center gap-1 shrink-0 text-amber-400 text-xs">
@@ -110,15 +122,15 @@ export function ParkingCard({
                 </span>
               </div>
             </div>
-            <p className="text-xs text-slate-400 truncate mt-0.5">
+            <p className="text-xs text-slate-600 dark:text-slate-400 truncate mt-0.5">
               {spot.location}
             </p>
           </div>
 
           {/* Quick Info & Tags */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-1.5">
-            <span className="flex items-center gap-1 text-[11px] text-slate-400">
-              <MapPin className="w-3 h-3 text-slate-500" />
+            <span className="flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-400">
+              <MapPin className="w-3 h-3 text-slate-900 dark:text-slate-500" />
               {spot.distance !== undefined
                 ? formatDistance(spot.distance)
                 : "India"}
@@ -160,7 +172,7 @@ export function ParkingCard({
           <div className="flex gap-2 pt-1">
             {spot.hasEVCharging && (
               <span title="EV Charging Station">
-                <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                <Zap className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
               </span>
             )}
             {spot.hasSecurity && (
@@ -185,23 +197,23 @@ export function ParkingCard({
             <motion.div
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="pt-2 border-t border-white/5 space-y-1.5"
+              className="pt-2 border-t border-slate-300 dark:border-white/5 space-y-1.5"
             >
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">
+              <div className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold">
                 Slot Types Available
               </div>
               <div className="flex gap-2 flex-wrap">
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/50 border border-white/5">
+                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/50 border border-slate-300 dark:border-white/5">
                   <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span className="text-[10px] text-slate-300">Compact</span>
+                  <span className="text-[10px] text-slate-700 dark:text-slate-300">Compact</span>
                 </div>
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/50 border border-white/5">
+                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/50 border border-slate-300 dark:border-white/5">
                   <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                  <span className="text-[10px] text-slate-300">Standard</span>
+                  <span className="text-[10px] text-slate-700 dark:text-slate-300">Standard</span>
                 </div>
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/50 border border-white/5">
+                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800/50 border border-slate-300 dark:border-white/5">
                   <div className="w-2 h-2 rounded-full bg-amber-400" />
-                  <span className="text-[10px] text-slate-300">Premium</span>
+                  <span className="text-[10px] text-slate-700 dark:text-slate-300">Premium</span>
                 </div>
               </div>
             </motion.div>
@@ -217,16 +229,16 @@ export function ParkingCard({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden pt-2 border-t border-white/5"
+            className="overflow-hidden pt-2 border-t border-slate-300 dark:border-white/5"
           >
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-slate-500 block uppercase tracking-wider">
+                <span className="text-[10px] text-slate-900 dark:text-slate-500 block uppercase tracking-wider">
                   Hourly Price
                 </span>
-                <span className="text-lg font-black text-cyan-400">
+                <span className="text-lg font-black text-cyan-600 dark:text-cyan-400">
                   {formatCurrency(spot.pricing)}
-                  <span className="text-xs text-slate-400 font-normal">
+                  <span className="text-xs text-slate-600 dark:text-slate-400 font-normal">
                     /hr
                   </span>
                 </span>
@@ -235,7 +247,7 @@ export function ParkingCard({
                 disabled={isSoldOut}
                 onClick={handleBook}
                 size="sm"
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs px-4 flex items-center gap-1 shadow-lg shadow-cyan-500/10 border-0 disabled:bg-slate-800 disabled:text-slate-500"
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs px-4 flex items-center gap-1 shadow-lg shadow-cyan-500/10 border-0 disabled:bg-slate-800 disabled:text-slate-900 dark:text-slate-500"
               >
                 {isSoldOut ? "Sold Out" : "Reserve Spot"}
                 <ArrowRight className="w-3.5 h-3.5" />

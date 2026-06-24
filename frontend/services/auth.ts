@@ -7,15 +7,19 @@ export function getAuthHeaders(): HeadersInit {
 }
 
 export async function login(email: string, password: string) {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL 
+    ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login` 
+    : '/api/auth/login';
+
+  const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
   
   if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.message || 'Login failed');
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || `Login failed with status ${response.status}`);
   }
   
   const data = await response.json();
@@ -27,43 +31,63 @@ export async function login(email: string, password: string) {
 }
 
 export async function register(name: string, email: string, password: string, role = 'CUSTOMER') {
-  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password, role }),
-  });
-  
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.message || 'Registration failed');
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL 
+    ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register`
+    : `/api/auth/register`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, role }),
+    });
+    
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || 'Registration failed');
+    }
+    
+    const data = await response.json();
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('smartpark_token', data.token);
+      localStorage.setItem('smartpark_user', JSON.stringify(data.user));
+    }
+    return data;
+  } catch (error: any) {
+    console.error('Registration error:', error);
+    throw new Error(error.message || 'Failed to connect to the authentication service');
   }
-  
-  const data = await response.json();
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('smartpark_token', data.token);
-    localStorage.setItem('smartpark_user', JSON.stringify(data.user));
-  }
-  return data;
 }
 
 export async function getProfile() {
-  const headers = getAuthHeaders();
-  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-    method: 'GET',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (!response.ok) {
-    if (response.status === 401) {
-      logout();
+  if (typeof window === 'undefined') return null;
+  const token = localStorage.getItem('smartpark_token');
+  if (!token) return null;
+
+  try {
+    const url = process.env.NEXT_PUBLIC_API_BASE_URL 
+      ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/profile` 
+      : '/api/auth/profile';
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) logout();
+      throw new Error(`HTTP ${response.status}`);
     }
-    throw new Error('Failed to fetch profile');
+
+    return await response.json();
+  } catch (error) {
+    console.error('Profile fetch failed:', error);
+    return null;
   }
-  
-  return response.json();
 }
 
 export function getCurrentUser() {

@@ -41,8 +41,8 @@ export default function StaffDashboard() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
+      <Loader2 className="w-10 h-10 text-cyan-600 dark:text-cyan-400 animate-spin" />
     </div>
   );
 
@@ -54,17 +54,17 @@ export default function StaffDashboard() {
   ];
 
   const colorMap: Record<string, string> = {
-    emerald: "text-emerald-400", amber: "text-amber-400", cyan: "text-cyan-400", rose: "text-rose-400"
+    emerald: "text-emerald-400", amber: "text-amber-400", cyan: "text-cyan-600 dark:text-cyan-400", rose: "text-rose-400"
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex selection:bg-cyan-500/30">
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Staff Sidebar */}
-      <aside className="w-64 border-r border-white/10 bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
+      <aside className="w-64 border-r border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
         <div className="flex items-center gap-2.5 mb-3 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium shadow-[0_0_15px_rgba(16,185,129,0.4)]">
             <span className="text-xs font-black">PF</span>
           </div>
           <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-emerald-400 text-xs block tracking-wider font-bold">Staff</span></span>
@@ -72,8 +72,8 @@ export default function StaffDashboard() {
 
         <div className="p-3 mb-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
           <p className="text-[10px] text-emerald-400 font-black uppercase tracking-wider">Logged in as</p>
-          <p className="text-sm font-bold text-white mt-0.5">{user?.name || "Staff Officer"}</p>
-          <p className="text-[10px] text-slate-500">{user?.role}</p>
+          <p className="text-sm font-bold text-slate-950 dark:text-white font-medium mt-0.5">{user?.name || "Staff Officer"}</p>
+          <p className="text-[10px] text-slate-900 dark:text-slate-500">{user?.role}</p>
         </div>
 
         <nav className="flex-1 space-y-1">
@@ -84,7 +84,7 @@ export default function StaffDashboard() {
             { label: "Vehicle Monitoring", path: "/staff/vehicles", icon: Car },
           ].map((item) => (
             <button key={item.path} onClick={() => router.push(item.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${item.active ? "bg-emerald-500/10 text-emerald-400" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${item.active ? "bg-emerald-500/10 text-emerald-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5"}`}>
               <item.icon className="w-4 h-4" />
               {item.label}
             </button>
@@ -99,16 +99,16 @@ export default function StaffDashboard() {
       <main className="flex-1 p-8 lg:p-10 overflow-y-auto relative z-10">
         <header className="mb-10">
           <h1 className="text-3xl font-black">Staff Operations Hub</h1>
-          <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Live parking facility management</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest font-bold mt-1">Live parking facility management</p>
         </header>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {stats.map((stat, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-              className="bg-slate-900 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
+              className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-2xl p-5 relative overflow-hidden">
               <stat.icon className={`absolute top-4 right-4 w-10 h-10 opacity-10 ${colorMap[stat.color]}`} />
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block mb-1">{stat.label}</span>
+              <span className="text-[10px] text-slate-900 dark:text-slate-500 uppercase tracking-wider font-bold block mb-1">{stat.label}</span>
               <span className={`text-4xl font-black ${colorMap[stat.color]}`}>{stat.value}</span>
             </motion.div>
           ))}
@@ -128,18 +128,18 @@ export default function StaffDashboard() {
                 action.color === "emerald" ? "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40" :
                 "bg-amber-500/5 border-amber-500/20 hover:border-amber-500/40"
               }`}>
-              <action.icon className={`w-8 h-8 mb-3 ${action.color === "cyan" ? "text-cyan-400" : action.color === "emerald" ? "text-emerald-400" : "text-amber-400"}`} />
-              <h3 className="font-bold text-white text-sm">{action.label}</h3>
-              <p className="text-xs text-slate-400 mt-0.5">{action.desc}</p>
+              <action.icon className={`w-8 h-8 mb-3 ${action.color === "cyan" ? "text-cyan-600 dark:text-cyan-400" : action.color === "emerald" ? "text-emerald-400" : "text-amber-400"}`} />
+              <h3 className="font-bold text-slate-950 dark:text-white font-medium text-sm">{action.label}</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{action.desc}</p>
             </motion.button>
           ))}
         </div>
 
         {/* Active Bookings Preview */}
-        <div className="bg-slate-900 border border-white/5 rounded-3xl overflow-hidden">
-          <div className="flex justify-between items-center p-5 border-b border-white/5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300">Active & Pending Bookings</h2>
-            <button onClick={() => router.push("/staff/reservations")} className="text-xs text-cyan-400 hover:text-cyan-300 font-bold">View All →</button>
+        <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl overflow-hidden">
+          <div className="flex justify-between items-center p-5 border-b border-slate-300 dark:border-white/5">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Active & Pending Bookings</h2>
+            <button onClick={() => router.push("/staff/reservations")} className="text-xs text-cyan-600 dark:text-cyan-400 hover:text-cyan-300 font-bold">View All →</button>
           </div>
           <div className="divide-y divide-white/5">
             {MOCK_ACTIVE.map((b, i) => (
@@ -147,17 +147,17 @@ export default function StaffDashboard() {
                 <div className="flex items-center gap-4">
                   <div className={`w-2 h-8 rounded-full ${b.status === "ACTIVE" ? "bg-emerald-500" : "bg-amber-500"}`} />
                   <div>
-                    <p className="text-sm font-bold text-white">{b.user}</p>
-                    <p className="text-xs text-slate-400 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-cyan-400" /> {b.lot} · Slot {b.slot}
+                    <p className="text-sm font-bold text-slate-950 dark:text-white font-medium">{b.user}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-cyan-600 dark:text-cyan-400" /> {b.lot} · Slot {b.slot}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-slate-300 flex items-center gap-1 justify-end">
-                    <Clock className="w-3 h-3 text-slate-500" /> {b.start} — {b.end}
+                  <p className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 justify-end">
+                    <Clock className="w-3 h-3 text-slate-900 dark:text-slate-500" /> {b.start} — {b.end}
                   </p>
-                  <p className="text-xs font-black text-cyan-400">{formatCurrency(b.amount)}</p>
+                  <p className="text-xs font-black text-cyan-600 dark:text-cyan-400">{formatCurrency(b.amount)}</p>
                 </div>
               </div>
             ))}

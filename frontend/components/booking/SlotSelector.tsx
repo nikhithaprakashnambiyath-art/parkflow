@@ -37,9 +37,11 @@ export function SlotSelector({
     };
 
     slots.forEach((slot) => {
-      stats[slot.type].total++;
+      const t = slot.type as string;
+      if (!stats[t as keyof typeof stats]) return; // skip unknown types
+      stats[t as keyof typeof stats].total++;
       if (slot.status === "available") {
-        stats[slot.type].available++;
+        stats[t as keyof typeof stats].available++;
       }
     });
 
@@ -50,10 +52,11 @@ export function SlotSelector({
   const slotsByFloor = useMemo(() => {
     const grouped: Record<number, ParkingSlot[]> = {};
     slots.forEach((slot) => {
-      if (!grouped[slot.floor]) {
-        grouped[slot.floor] = [];
+      const floor = slot.floor ?? 1; // fallback to floor 1 if undefined
+      if (!grouped[floor]) {
+        grouped[floor] = [];
       }
-      grouped[slot.floor].push(slot);
+      grouped[floor].push(slot);
     });
     return grouped;
   }, [slots]);
@@ -80,7 +83,7 @@ export function SlotSelector({
       <div className="w-full flex items-center justify-center p-8">
         <div className="text-center">
           <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin mx-auto mb-4" />
-          <p className="text-sm text-slate-400">Loading available slots...</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">Loading available slots...</p>
         </div>
       </div>
     );
@@ -95,7 +98,7 @@ export function SlotSelector({
             key={type}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 rounded-xl bg-slate-900 border border-white/10 hover:border-cyan-500/30 transition-all"
+            className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 hover:border-cyan-500/30 transition-all"
           >
             <div className="flex items-start justify-between mb-2">
               <div className="font-semibold text-sm capitalize text-slate-200">
@@ -103,10 +106,10 @@ export function SlotSelector({
               </div>
               {type === "premium" && <Zap className="w-4 h-4 text-amber-400" />}
             </div>
-            <div className="text-2xl font-bold text-cyan-400">
+            <div className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
               {slotStats[type].available}
             </div>
-            <div className="text-xs text-slate-500">
+            <div className="text-xs text-slate-900 dark:text-slate-500">
               of {slotStats[type].total} available
             </div>
           </motion.div>
@@ -120,8 +123,8 @@ export function SlotSelector({
           .map(([floor, floorSlots]) => (
             <div key={floor} className="space-y-3">
               <div className="flex items-center gap-2 px-2">
-                <MapPin className="w-4 h-4 text-slate-500" />
-                <span className="text-sm font-semibold text-slate-400">
+                <MapPin className="w-4 h-4 text-slate-900 dark:text-slate-500" />
+                <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">
                   Floor {floor} ({floorSlots.length} slots)
                 </span>
               </div>
@@ -142,7 +145,7 @@ export function SlotSelector({
                       }
                     }}
                     disabled={slot.status !== "available"}
-                    className={`relative h-12 rounded-lg font-bold text-sm transition-all border border-white/10 ${getSlotColor(
+                    className={`relative h-12 rounded-lg font-bold text-sm transition-all border border-slate-300 dark:border-white/10 ${getSlotColor(
                       slot,
                     )}`}
                   >
@@ -151,7 +154,7 @@ export function SlotSelector({
                     {/* Status Badge */}
                     {slot.status !== "available" && (
                       <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
-                        <Lock className="w-3 h-3 text-white" />
+                        <Lock className="w-3 h-3 text-slate-950 dark:text-white font-medium" />
                       </div>
                     )}
 
@@ -182,11 +185,11 @@ export function SlotSelector({
         >
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-sm text-slate-400 mb-1">Selected Slot</div>
-              <div className="text-xl font-bold text-cyan-400">
+              <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Selected Slot</div>
+              <div className="text-xl font-bold text-cyan-600 dark:text-cyan-400">
                 {selectedSlot.slotNumber}
               </div>
-              <div className="text-xs text-slate-500 mt-2">
+              <div className="text-xs text-slate-900 dark:text-slate-500 mt-2">
                 Floor {selectedSlot.floor} • Zone {selectedSlot.zone} •{" "}
                 <span className="capitalize">{selectedSlot.type}</span>
               </div>
@@ -210,22 +213,22 @@ export function SlotSelector({
       )}
 
       {/* Legend */}
-      <div className="pt-4 border-t border-white/5 space-y-2">
-        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+      <div className="pt-4 border-t border-slate-300 dark:border-white/5 space-y-2">
+        <div className="text-xs font-semibold text-slate-900 dark:text-slate-500 uppercase tracking-wider">
           Legend
         </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-emerald-600" />
-            <span className="text-xs text-slate-400">Available</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Available</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-slate-600" />
-            <span className="text-xs text-slate-400">Occupied</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Occupied</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-amber-600" />
-            <span className="text-xs text-slate-400">Reserved</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Reserved</span>
           </div>
         </div>
       </div>

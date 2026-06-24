@@ -79,14 +79,14 @@ function ReviewModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md"
     >
       <motion.div
         initial={{ scale: 0.85, opacity: 0, y: 24 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.85, opacity: 0, y: 24 }}
         transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-        className="w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative"
+        className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-3xl overflow-hidden shadow-2xl relative"
       >
         {/* Ambient glow */}
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -94,7 +94,7 @@ function ReviewModal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors z-10"
+          className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium transition-colors z-10"
         >
           <X className="w-4 h-4" />
         </button>
@@ -105,11 +105,11 @@ function ReviewModal({
               {/* Header */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/20 flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-cyan-400" />
+                  <MessageSquare className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-white">Rate Your Visit</h2>
-                  <p className="text-[11px] text-slate-400">{lotName}</p>
+                  <h2 className="text-lg font-black text-slate-950 dark:text-white font-medium">Rate Your Visit</h2>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400">{lotName}</p>
                 </div>
               </div>
 
@@ -153,7 +153,7 @@ function ReviewModal({
 
               {/* Quick Tags */}
               <div className="mb-5">
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">
+                <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">
                   What stood out? (optional)
                 </span>
                 <div className="flex flex-wrap gap-2">
@@ -163,8 +163,8 @@ function ReviewModal({
                       onClick={() => toggleTag(tag)}
                       className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all duration-200 ${
                         selectedTags.includes(tag)
-                          ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-400'
-                          : 'bg-white/3 border-white/8 text-slate-400 hover:border-white/20 hover:text-slate-300'
+                          ? 'bg-cyan-500/15 border-cyan-500/50 text-cyan-600 dark:text-cyan-400'
+                          : 'bg-white/3 border-white/8 text-slate-600 dark:text-slate-400 hover:border-white/20 hover:text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       {selectedTags.includes(tag) && <span className="mr-1">✓</span>}
@@ -176,7 +176,7 @@ function ReviewModal({
 
               {/* Comment */}
               <div className="mb-6">
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
+                <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-1.5">
                   Additional comments (optional)
                 </label>
                 <textarea
@@ -184,7 +184,7 @@ function ReviewModal({
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Tell us about your experience..."
-                  className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 resize-none"
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 resize-none"
                 />
               </div>
 
@@ -233,8 +233,8 @@ function ReviewModal({
               >
                 <ThumbsUp className="w-9 h-9 text-emerald-400" />
               </motion.div>
-              <h3 className="text-xl font-black text-white mb-2">Thanks for the feedback!</h3>
-              <p className="text-xs text-slate-400 max-w-[200px]">
+              <h3 className="text-xl font-black text-slate-950 dark:text-white font-medium mb-2">Thanks for the feedback!</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 max-w-[200px]">
                 Your review helps other drivers find the best spots.
               </p>
             </motion.div>
@@ -249,12 +249,12 @@ function ReviewModal({
 export default function QrTicket({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
+
+  // ── ALL hooks must be declared before any conditional returns ──
+  const [isMounted, setIsMounted] = useState(false);
   const [booking, setBooking] = useState<any | null>(null);
-const [isMounted, setIsMounted] = useState(false);
-useEffect(() => setIsMounted(true), []);
-if (!isMounted) return null;
-const [loading, setLoading] = useState(true);
-const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Simulator states
   const [simulating, setSimulating] = useState(false);
@@ -265,6 +265,8 @@ const [errorMsg, setErrorMsg] = useState('');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
   const [reviewDone, setReviewDone] = useState(false);
+
+  useEffect(() => { setIsMounted(true); }, []);
 
   const loadDetails = async () => {
     try {
@@ -332,9 +334,11 @@ const [errorMsg, setErrorMsg] = useState('');
     });
   };
 
+  if (!isMounted) return null;
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
@@ -369,7 +373,7 @@ const [errorMsg, setErrorMsg] = useState('');
     PENDING: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
     ACTIVE: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     COMPLETED: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    CANCELLED: 'bg-slate-800/40 text-slate-400 border-white/5',
+    CANCELLED: 'bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-white/5',
   };
 
   return (
@@ -391,7 +395,7 @@ const [errorMsg, setErrorMsg] = useState('');
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center py-12 px-6 relative selection:bg-cyan-500/30 overflow-hidden">
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex items-center justify-center py-12 px-6 relative selection:bg-cyan-500/30 overflow-hidden">
         {/* Animated Ambient background */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-[128px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-[128px] pointer-events-none" />
@@ -406,20 +410,20 @@ const [errorMsg, setErrorMsg] = useState('');
               <Button
                 variant="ghost"
                 onClick={() => router.push('/dashboard')}
-                className="text-slate-400 hover:text-white hover:bg-white/5 rounded-xl"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5 rounded-xl"
               >
                 <ArrowLeft className="w-5 h-5 mr-2" /> Back to Dashboard
               </Button>
             </div>
 
             {/* Ticket Card */}
-            <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
+            <div className="w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-3xl overflow-hidden shadow-2xl relative">
 
               {/* Holographic Header Bar */}
-              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-600/20 px-6 py-4 flex items-center justify-between border-b border-white/5">
-                <span className="text-xs font-bold uppercase tracking-widest text-slate-300">Boarding Pass</span>
+              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-600/20 px-6 py-4 flex items-center justify-between border-b border-slate-300 dark:border-white/5">
+                <span className="text-xs font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">Boarding Pass</span>
                 <div className={`px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-wider ${
-                  statusColors[activeBooking.status] || 'bg-slate-900'
+                  statusColors[activeBooking.status] || 'bg-white dark:bg-slate-900'
                 }`}>
                   {activeBooking.status}
                 </div>
@@ -444,44 +448,44 @@ const [errorMsg, setErrorMsg] = useState('');
                 </div>
 
                 <div className="mb-2">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Reservation Identifier</span>
-                  <span className="font-mono text-xs text-cyan-400 font-bold">{id}</span>
+                  <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block">Reservation Identifier</span>
+                  <span className="font-mono text-xs text-cyan-600 dark:text-cyan-400 font-bold">{id}</span>
                 </div>
 
-                <h3 className="text-xl font-black text-white mt-4">{activeBooking.slot.lot.name}</h3>
-                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400" /> {activeBooking.slot.lot.location}
+                <h3 className="text-xl font-black text-slate-950 dark:text-white font-medium mt-4">{activeBooking.slot.lot.name}</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> {activeBooking.slot.lot.location}
                 </p>
 
                 {/* Dotted separator */}
                 <div className="w-full flex items-center my-6">
-                  <div className="w-3 h-6 bg-slate-950 rounded-r-full -ml-6 border-y border-r border-white/10 shrink-0" />
+                  <div className="w-3 h-6 bg-slate-100 dark:bg-slate-950 rounded-r-full -ml-6 border-y border-r border-slate-300 dark:border-white/10 shrink-0" />
                   <div className="flex-1 border-t border-dashed border-white/20" />
-                  <div className="w-3 h-6 bg-slate-950 rounded-l-full -mr-6 border-y border-l border-white/10 shrink-0" />
+                  <div className="w-3 h-6 bg-slate-100 dark:bg-slate-950 rounded-l-full -mr-6 border-y border-l border-slate-300 dark:border-white/10 shrink-0" />
                 </div>
 
                 {/* Ticket details */}
                 <div className="w-full grid grid-cols-2 gap-4 text-left text-xs">
                   <div>
-                    <span className="text-slate-500 font-semibold uppercase tracking-wider block mb-1">Assigned Slot</span>
-                    <span className="text-sm font-bold text-white uppercase flex items-center gap-1.5">
-                      <Car className="w-4 h-4 text-cyan-400" /> Slot {activeBooking.slot.name}
+                    <span className="text-slate-900 dark:text-slate-500 font-semibold uppercase tracking-wider block mb-1">Assigned Slot</span>
+                    <span className="text-sm font-bold text-slate-950 dark:text-white font-medium uppercase flex items-center gap-1.5">
+                      <Car className="w-4 h-4 text-cyan-600 dark:text-cyan-400" /> Slot {activeBooking.slot.name}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500 font-semibold uppercase tracking-wider block mb-1">Total Pricing</span>
-                    <span className="text-sm font-bold text-white">{formatCurrency(activeBooking.amount)}</span>
+                    <span className="text-slate-900 dark:text-slate-500 font-semibold uppercase tracking-wider block mb-1">Total Pricing</span>
+                    <span className="text-sm font-bold text-slate-950 dark:text-white font-medium">{formatCurrency(activeBooking.amount)}</span>
                   </div>
                   <div>
-                    <span className="text-slate-500 font-semibold uppercase tracking-wider block mb-1">Starts At</span>
-                    <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-slate-500" /> {formatDate(activeBooking.startTime)}
+                    <span className="text-slate-900 dark:text-slate-500 font-semibold uppercase tracking-wider block mb-1">Starts At</span>
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-slate-900 dark:text-slate-500" /> {formatDate(activeBooking.startTime)}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500 font-semibold uppercase tracking-wider block mb-1">Ends At</span>
-                    <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" /> {formatDate(activeBooking.endTime)}
+                    <span className="text-slate-900 dark:text-slate-500 font-semibold uppercase tracking-wider block mb-1">Ends At</span>
+                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-900 dark:text-slate-500" /> {formatDate(activeBooking.endTime)}
                     </span>
                   </div>
                 </div>
@@ -510,15 +514,15 @@ const [errorMsg, setErrorMsg] = useState('');
           </div>
 
           {/* RIGHT PANEL: GATE SIMULATOR */}
-          <div className="bg-slate-900/60 border border-white/10 rounded-3xl p-8 backdrop-blur-xl flex flex-col relative overflow-hidden">
+          <div className="bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/10 rounded-3xl p-8 backdrop-blur-xl flex flex-col relative overflow-hidden">
 
             {/* Simulation Header */}
             <div className="mb-6">
-              <span className="text-xs text-cyan-400 font-bold uppercase tracking-wider block mb-1">Gate Operations</span>
-              <h2 className="text-2xl font-black flex items-center gap-2 text-white">
+              <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-wider block mb-1">Gate Operations</span>
+              <h2 className="text-2xl font-black flex items-center gap-2 text-slate-950 dark:text-white font-medium">
                 Gate Simulator
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                 Simulate scanning this QR code at entry/exit points to verify live sensor responses.
               </p>
             </div>
@@ -531,7 +535,7 @@ const [errorMsg, setErrorMsg] = useState('');
             )}
 
             {/* Gate Animation */}
-            <div className="border border-white/5 bg-slate-950 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] mb-6 relative overflow-hidden">
+            <div className="border border-slate-300 dark:border-white/5 bg-slate-100 dark:bg-slate-950 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] mb-6 relative overflow-hidden">
               {gateStatus !== 'closed' && (
                 <div className="absolute inset-0 bg-cyan-500/5 animate-pulse" />
               )}
@@ -545,12 +549,12 @@ const [errorMsg, setErrorMsg] = useState('');
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="flex flex-col items-center text-center gap-3"
                   >
-                    <div className="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+                    <div className="w-14 h-14 rounded-full bg-white dark:bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-900 dark:text-slate-500">
                       <QrCode className="w-6 h-6" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Gate Status</span>
-                      <h3 className="text-lg font-black text-slate-500 uppercase mt-0.5">CLOSED • WAITING FOR SCAN</h3>
+                      <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Gate Status</span>
+                      <h3 className="text-lg font-black text-slate-900 dark:text-slate-500 uppercase mt-0.5">CLOSED • WAITING FOR SCAN</h3>
                     </div>
                   </motion.div>
                 )}
@@ -569,7 +573,7 @@ const [errorMsg, setErrorMsg] = useState('');
                     <div>
                       <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Access Granted</span>
                       <h3 className="text-lg font-black text-emerald-400 uppercase mt-0.5">ENTRY GATE OPENING</h3>
-                      <p className="text-[10px] text-slate-400 mt-1">Sensor detected license plate matching slot {activeBooking.slot.name}</p>
+                      <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-1">Sensor detected license plate matching slot {activeBooking.slot.name}</p>
                     </div>
                   </motion.div>
                 )}
@@ -588,7 +592,7 @@ const [errorMsg, setErrorMsg] = useState('');
                     <div>
                       <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Access Granted</span>
                       <h3 className="text-lg font-black text-blue-400 uppercase mt-0.5">EXIT GATE OPENING</h3>
-                      <p className="text-[10px] text-slate-400 mt-1">Check-out recorded. Slot {activeBooking.slot.name} released to available pool.</p>
+                      <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-1">Check-out recorded. Slot {activeBooking.slot.name} released to available pool.</p>
                     </div>
                   </motion.div>
                 )}
@@ -634,14 +638,14 @@ const [errorMsg, setErrorMsg] = useState('');
             )}
 
             {/* Simulated Gate Log */}
-            <div className="flex-1 flex flex-col bg-slate-950 border border-white/5 rounded-2xl p-4 min-h-[140px] max-h-[200px] overflow-hidden">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2 block">System Telemetry Log</span>
-              <div className="flex-1 overflow-y-auto space-y-1.5 text-[10px] font-mono text-slate-400">
+            <div className="flex-1 flex flex-col bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/5 rounded-2xl p-4 min-h-[140px] max-h-[200px] overflow-hidden">
+              <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 block">System Telemetry Log</span>
+              <div className="flex-1 overflow-y-auto space-y-1.5 text-[10px] font-mono text-slate-600 dark:text-slate-400">
                 {simLog.length === 0 ? (
                   <div className="text-slate-600 italic py-4">No sensor events recorded. Select simulation triggers above to begin gate testing.</div>
                 ) : (
                   simLog.map((log, index) => (
-                    <div key={index} className="truncate border-b border-white/5 pb-1">
+                    <div key={index} className="truncate border-b border-slate-300 dark:border-white/5 pb-1">
                       {log}
                     </div>
                   ))

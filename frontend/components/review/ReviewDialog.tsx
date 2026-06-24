@@ -71,24 +71,24 @@ export function ReviewDialog({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-8 shadow-2xl"
+            className="relative w-full max-w-md rounded-3xl border border-slate-300 dark:border-white/10 bg-white dark:bg-slate-900 p-8 shadow-2xl"
           >
             {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute right-4 top-4 rounded-lg p-2 hover:bg-slate-800 transition-colors"
             >
-              <X className="h-5 w-5 text-slate-400" />
+              <X className="h-5 w-5 text-slate-600 dark:text-slate-400" />
             </button>
 
             {!success ? (
               <>
                 {/* Header */}
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-white mb-1">
+                  <h2 className="text-2xl font-bold text-slate-950 dark:text-white font-medium mb-1">
                     How was your experience?
                   </h2>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     Share your feedback about {lotName}
                   </p>
                 </div>
@@ -107,7 +107,7 @@ export function ReviewDialog({
 
                 {/* Rating Stars */}
                 <div className="mb-6">
-                  <label className="mb-3 block text-sm font-semibold text-slate-300">
+                  <label className="mb-3 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Rating
                   </label>
                   <div className="flex gap-2">
@@ -132,7 +132,7 @@ export function ReviewDialog({
                       </motion.button>
                     ))}
                   </div>
-                  <div className="mt-2 text-sm text-slate-400">
+                  <div className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                     {rating === 5 && "Excellent"}
                     {rating === 4 && "Great experience"}
                     {rating === 3 && "Good, but could be better"}
@@ -143,7 +143,7 @@ export function ReviewDialog({
 
                 {/* Comment */}
                 <div className="mb-6">
-                  <label className="mb-2 block text-sm font-semibold text-slate-300">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Share your feedback (optional)
                   </label>
                   <textarea
@@ -151,10 +151,10 @@ export function ReviewDialog({
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Tell us what you liked or what could be improved..."
                     maxLength={500}
-                    className="w-full rounded-xl border border-white/10 bg-slate-950 p-3 text-sm text-slate-200 placeholder-slate-600 focus:border-cyan-500/50 focus:outline-none resize-none"
+                    className="w-full rounded-xl border border-slate-300 dark:border-white/10 bg-slate-100 dark:bg-slate-950 p-3 text-sm text-slate-200 placeholder-slate-600 focus:border-cyan-500/50 focus:outline-none resize-none"
                     rows={4}
                   />
-                  <div className="mt-1 text-xs text-slate-500">
+                  <div className="mt-1 text-xs text-slate-900 dark:text-slate-500">
                     {comment.length}/500 characters
                   </div>
                 </div>
@@ -203,10 +203,10 @@ export function ReviewDialog({
                 >
                   <Star className="h-8 w-8 text-emerald-400 fill-emerald-400" />
                 </motion.div>
-                <h3 className="mb-2 text-xl font-bold text-white">
+                <h3 className="mb-2 text-xl font-bold text-slate-950 dark:text-white font-medium">
                   Thank You!
                 </h3>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Your review helps other users find great parking spots
                 </p>
               </motion.div>

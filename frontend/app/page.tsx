@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSearchStore } from "@/store/searchStore";
 import { motion } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
+import Image from "next/image";
 import {
   Search,
   MapPin,
@@ -79,29 +80,44 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-cyan-500/30 font-sans">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 selection:bg-cyan-500/30 font-sans">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-slate-300 dark:border-white/10">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(0,217,255,0.5)]">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium shadow-[0_0_15px_rgba(0,217,255,0.5)]">
             <span className="text-xs font-black">PF</span>
           </div>
-          <span className="text-xl font-bold tracking-tight">ParkFlow <span className="text-cyan-400">AI</span></span>
+          <span className="text-xl font-bold tracking-tight">ParkFlow <span className="text-cyan-600 dark:text-cyan-400">AI</span></span>
         </div>
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-          <a href="#how-it-works" className="hover:text-cyan-400 transition-colors">How it works</a>
-          <a href="#locations" className="hover:text-cyan-400 transition-colors">Locations</a>
-          <button onClick={() => router.push('/features')} className="hover:text-cyan-400 transition-colors">Features</button>
-          <button onClick={() => router.push('/pricing')} className="hover:text-cyan-400 transition-colors">Pricing</button>
-          <button onClick={() => router.push('/contact')} className="hover:text-cyan-400 transition-colors">Contact</button>
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-700 dark:text-slate-300">
+          <a href="#how-it-works" className="hover:text-cyan-600 dark:text-cyan-400 transition-colors">How it works</a>
+          <a href="#locations" className="hover:text-cyan-600 dark:text-cyan-400 transition-colors">Locations</a>
+          <button onClick={() => router.push('/features')} className="hover:text-cyan-600 dark:text-cyan-400 transition-colors">Features</button>
+          <button onClick={() => router.push('/pricing')} className="hover:text-cyan-600 dark:text-cyan-400 transition-colors">Pricing</button>
+          <button onClick={() => router.push('/contact')} className="hover:text-cyan-600 dark:text-cyan-400 transition-colors">Contact</button>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-white/10 hidden sm:flex" onClick={() => router.push("/login")}>
-            Log in
-          </Button>
-          <Button className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-[0_0_20px_rgba(0,217,255,0.3)]" onClick={() => router.push("/login?tab=register")}>
-            Sign up
-          </Button>
+          {user ? (
+            <>
+              {user.role === 'ADMIN' && (
+                <Button variant="ghost" className="text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/10 font-medium hidden sm:flex" onClick={() => router.push("/admin/dashboard")}>
+                  Admin Portal
+                </Button>
+              )}
+              <Button className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-[0_0_20px_rgba(0,217,255,0.3)]" onClick={() => router.push("/dashboard")}>
+                Dashboard
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" className="text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:text-white font-medium hover:bg-white/10 hidden sm:flex" onClick={() => router.push("/login")}>
+                Log in
+              </Button>
+              <Button className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-[0_0_20px_rgba(0,217,255,0.3)]" onClick={() => router.push("/login?tab=register")}>
+                Sign up
+              </Button>
+            </>
+          )}
           <ThemeToggle />
           <button className="md:hidden flex flex-col gap-1 p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
             <span className={`w-5 h-0.5 bg-slate-300 transition-all ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
@@ -111,13 +127,22 @@ export default function Home() {
         </div>
       </nav>
       {menuOpen && (
-        <div className="fixed top-[65px] left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-b border-white/10 p-6 flex flex-col gap-4 md:hidden">
-          <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium">How it works</a>
-          <a href="#locations" onClick={() => setMenuOpen(false)} className="text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium">Locations</a>
-          <button onClick={() => { router.push('/features'); setMenuOpen(false); }} className="text-left text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium">Features</button>
-          <button onClick={() => { router.push('/pricing'); setMenuOpen(false); }} className="text-left text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium">Pricing</button>
-          <button onClick={() => { router.push('/contact'); setMenuOpen(false); }} className="text-left text-slate-300 hover:text-cyan-400 transition-colors text-sm font-medium">Contact</button>
-          <button onClick={() => { router.push('/login'); setMenuOpen(false); }} className="text-left text-cyan-400 font-bold text-sm">Log in →</button>
+        <div className="fixed top-[65px] left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-b border-slate-300 dark:border-white/10 p-6 flex flex-col gap-4 md:hidden">
+          <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors text-sm font-medium">How it works</a>
+          <a href="#locations" onClick={() => setMenuOpen(false)} className="text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors text-sm font-medium">Locations</a>
+          <button onClick={() => { router.push('/features'); setMenuOpen(false); }} className="text-left text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors text-sm font-medium">Features</button>
+          <button onClick={() => { router.push('/pricing'); setMenuOpen(false); }} className="text-left text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors text-sm font-medium">Pricing</button>
+          <button onClick={() => { router.push('/contact'); setMenuOpen(false); }} className="text-left text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors text-sm font-medium">Contact</button>
+          {user ? (
+            <>
+              {user.role === 'ADMIN' && (
+                <button onClick={() => { router.push('/admin/dashboard'); setMenuOpen(false); }} className="text-left text-cyan-600 dark:text-cyan-400 font-bold text-sm">Admin Portal →</button>
+              )}
+              <button onClick={() => { router.push('/dashboard'); setMenuOpen(false); }} className="text-left text-cyan-600 dark:text-cyan-400 font-bold text-sm">Dashboard →</button>
+            </>
+          ) : (
+            <button onClick={() => { router.push('/login'); setMenuOpen(false); }} className="text-left text-cyan-600 dark:text-cyan-400 font-bold text-sm">Log in →</button>
+          )}
         </div>
       )}
 
@@ -136,7 +161,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-sm font-medium mb-6">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
@@ -152,7 +177,7 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-lg text-slate-400 mb-10 max-w-lg leading-relaxed">
+            <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-lg leading-relaxed">
               ParkFlow AI delivers real-time availability, instant
               reservations, and seamless navigation in one premium smart-city platform.
             </p>
@@ -160,18 +185,18 @@ export default function Home() {
             {/* Dynamic Booking Card */}
             <form
               onSubmit={handleSearchSubmit}
-              className="bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl relative overflow-hidden group"
+              className="bg-white shadow-sm dark:bg-slate-900/80 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-2xl p-2 shadow-2xl relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative flex flex-col md:flex-row gap-2">
                 <div className="flex-1 relative">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600 dark:text-slate-400" />
                   <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Where are you going? (e.g. Lulu Mall)"
-                    className="w-full bg-slate-950/50 border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
+                    className="w-full bg-slate-950/50 border border-slate-300 dark:border-white/5 rounded-xl py-4 pl-12 pr-4 text-slate-950 dark:text-white font-medium placeholder:text-slate-900 dark:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                   />
                 </div>
                  <button
@@ -190,7 +215,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
-            className="relative w-full aspect-square md:aspect-[4/3] rounded-3xl bg-slate-900 border border-white/10 overflow-hidden shadow-2xl"
+            className="relative w-full aspect-square md:aspect-[4/3] rounded-3xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 overflow-hidden shadow-2xl"
           >
             {/* Map Background Grid Simulation */}
             <div
@@ -210,14 +235,14 @@ export default function Home() {
               }}
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute top-1/4 left-1/4 bg-slate-950/80 backdrop-blur border border-cyan-500/30 px-4 py-2 rounded-xl flex items-center gap-3 shadow-lg cursor-pointer hover:border-cyan-400 transition-colors z-20"
+              className="absolute top-1/4 left-1/4 bg-white/80 dark:bg-slate-950/80 backdrop-blur border border-cyan-500/30 px-4 py-2 rounded-xl flex items-center gap-3 shadow-lg cursor-pointer hover:border-cyan-400 transition-colors z-20"
             >
-              <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+              <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                 <div className="w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,1)]" />
               </div>
               <div>
-                <div className="text-sm font-bold text-white">₹50/hr</div>
-                <div className="text-xs text-slate-400">40 spots left</div>
+                <div className="text-sm font-bold text-slate-950 dark:text-white font-medium">₹50/hr</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">40 spots left</div>
               </div>
             </motion.div>
 
@@ -233,14 +258,14 @@ export default function Home() {
                 ease: "easeInOut",
                 delay: 1,
               }}
-              className="absolute bottom-1/3 right-1/4 bg-slate-950/80 backdrop-blur border border-emerald-500/30 px-4 py-2 rounded-xl flex items-center gap-3 shadow-lg cursor-pointer hover:border-emerald-400 transition-colors z-20"
+              className="absolute bottom-1/3 right-1/4 bg-white/80 dark:bg-slate-950/80 backdrop-blur border border-emerald-500/30 px-4 py-2 rounded-xl flex items-center gap-3 shadow-lg cursor-pointer hover:border-emerald-400 transition-colors z-20"
             >
               <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-sm font-bold text-white">₹45/hr</div>
-                <div className="text-xs text-slate-400">Premium Secure</div>
+                <div className="text-sm font-bold text-slate-950 dark:text-white font-medium">₹45/hr</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Premium Secure</div>
               </div>
             </motion.div>
 
@@ -283,12 +308,12 @@ export default function Home() {
       </main>
 
       {/* How it Works Section */}
-      <section className="py-24 border-t border-white/5 bg-slate-900/30 relative" id="how-it-works">
+      <section className="py-24 border-t border-slate-300 dark:border-white/5 bg-slate-900/30 relative" id="how-it-works">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="text-xs text-cyan-400 font-bold uppercase tracking-widest block mb-2">Step-by-Step</span>
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest block mb-2">Step-by-Step</span>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">How ParkFlow AI Works</h2>
-            <p className="text-slate-400 max-w-md mx-auto">Three simple steps to secure, seamless parking in busy locations.</p>
+            <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">Three simple steps to secure, seamless parking in busy locations.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -297,10 +322,10 @@ export default function Home() {
               { step: '02', title: 'Choose Slot & Book', desc: 'Select your preferred parking slot and booking duration, then confirm checkout securely.' },
               { step: '03', title: 'Scan QR at Gate', desc: 'Arrive at the parking lot gate. Simply scan your digital QR ticket to open the automated boom barrier.' }
             ].map((item, idx) => (
-              <div key={idx} className="bg-slate-950/40 border border-white/5 rounded-2xl p-8 relative overflow-hidden group">
+              <div key={idx} className="bg-white shadow-sm dark:bg-slate-950/40 border border-slate-300 dark:border-white/5 rounded-2xl p-8 relative overflow-hidden group">
                 <div className="absolute top-4 right-4 text-4xl font-black text-cyan-500/10 group-hover:text-cyan-500/20 transition-colors">{item.step}</div>
-                <h3 className="text-xl font-bold text-white mb-3 mt-4">{item.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                <h3 className="text-xl font-bold text-slate-950 dark:text-white font-medium mb-3 mt-4">{item.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -308,12 +333,12 @@ export default function Home() {
       </section>
 
       {/* Locations Section */}
-      <section className="py-24 border-t border-white/5 bg-slate-950 relative" id="locations">
+      <section className="py-24 border-t border-slate-300 dark:border-white/5 bg-slate-100 dark:bg-slate-950 relative" id="locations">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="text-xs text-cyan-400 font-bold uppercase tracking-widest block mb-2">Operational Hubs</span>
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest block mb-2">Operational Hubs</span>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Operational Parking Hubs</h2>
-            <p className="text-slate-400 max-w-md mx-auto">Instant bookings are operational in top landmarks across key Indian cities.</p>
+            <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">Instant bookings are operational in top landmarks across key Indian cities.</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -328,17 +353,17 @@ export default function Home() {
                   setSearchQuery(hub.name);
                   router.push("/search");
                 }}
-                className="bg-slate-900/60 border border-white/5 hover:border-cyan-500/40 rounded-2xl overflow-hidden cursor-pointer group transition-all"
+                className="bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/5 hover:border-cyan-500/40 rounded-2xl overflow-hidden cursor-pointer group transition-all"
               >
                 <div className="h-48 overflow-hidden relative">
-                  <img src={hub.image} alt={hub.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute top-3 right-3 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-cyan-400 border border-white/5">
+                  <Image src={hub.image} alt={hub.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute top-3 right-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-cyan-600 dark:text-cyan-400 border border-slate-300 dark:border-white/5">
                     {hub.spots}
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">{hub.name}</h3>
-                  <p className="text-xs text-slate-400 mt-1">{hub.loc}</p>
+                  <h3 className="text-base font-bold text-slate-950 dark:text-white font-medium group-hover:text-cyan-600 dark:text-cyan-400 transition-colors">{hub.name}</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">{hub.loc}</p>
                 </div>
               </div>
             ))}
@@ -348,7 +373,7 @@ export default function Home() {
 
       {/* Benefits Section */}
       <section
-        className="py-24 border-t border-white/5 bg-slate-900/30 relative"
+        className="py-24 border-t border-slate-300 dark:border-white/5 bg-slate-900/30 relative"
         id="benefits"
       >
         <div className="container mx-auto px-6">
@@ -356,40 +381,40 @@ export default function Home() {
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Why choose ParkFlow AI?
             </h2>
-            <p className="text-slate-400">
+            <p className="text-slate-600 dark:text-slate-400">
               Award-winning experience designed for modern drivers and smart-city operators.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-slate-950/40 border border-white/5 hover:border-cyan-500/30 transition-colors group">
-              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
+            <div className="p-8 rounded-2xl bg-white shadow-sm dark:bg-slate-950/40 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 transition-colors group">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-600 dark:text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
                 <Navigation className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Live Navigation</h3>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Turn-by-turn routing directly to your reserved spot. No more
                 circling the block looking for spaces.
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-slate-950/40 border border-white/5 hover:border-blue-500/30 transition-colors group">
+            <div className="p-8 rounded-2xl bg-white shadow-sm dark:bg-slate-950/40 border border-slate-300 dark:border-white/5 hover:border-blue-500/30 transition-colors group">
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
                 <Zap className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Instant Booking</h3>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Secure your space in under 60 seconds with our single-page
                 progressive booking flow.
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-slate-950/40 border border-white/5 hover:border-purple-500/30 transition-colors group">
+            <div className="p-8 rounded-2xl bg-white shadow-sm dark:bg-slate-950/40 border border-slate-300 dark:border-white/5 hover:border-purple-500/30 transition-colors group">
               <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-6 group-hover:scale-110 transition-transform">
                 <Clock className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Dynamic Extension</h3>
-              <p className="text-slate-400 leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Running late? Extend your parking session with a single tap
                 directly from your phone.
               </p>
@@ -399,12 +424,12 @@ export default function Home() {
       </section>
 
       {/* Service Reviews Section */}
-      <section className="py-24 border-t border-white/5 bg-slate-950 relative" id="reviews">
+      <section className="py-24 border-t border-slate-300 dark:border-white/5 bg-slate-100 dark:bg-slate-950 relative" id="reviews">
         <div className="container mx-auto px-6 max-w-5xl">
           <div className="text-center mb-16">
-            <span className="text-xs text-cyan-400 font-bold uppercase tracking-widest block mb-2">Driver Feedback</span>
+            <span className="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase tracking-widest block mb-2">Driver Feedback</span>
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">What Drivers Say</h2>
-            <p className="text-slate-400 max-w-md mx-auto">Real customer reviews of our smart parking service, gate automation, and app.</p>
+            <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">Real customer reviews of our smart parking service, gate automation, and app.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12 items-start">
@@ -412,23 +437,23 @@ export default function Home() {
             {/* Reviews Feed List */}
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-slate-200 flex items-center gap-2 mb-4">
-                <MessageSquare className="w-5 h-5 text-cyan-400" />
+                <MessageSquare className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 Latest Service Reviews ({serviceReviews.length})
               </h3>
               
               {loadingReviews ? (
-                <div className="flex items-center gap-2 text-slate-500 py-8 justify-center">
+                <div className="flex items-center gap-2 text-slate-900 dark:text-slate-500 py-8 justify-center">
                   <div className="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
                   <span>Loading feed...</span>
                 </div>
               ) : serviceReviews.length === 0 ? (
-                <p className="text-slate-500 italic py-6">No service reviews submitted yet. Be the first to leave one!</p>
+                <p className="text-slate-900 dark:text-slate-500 italic py-6">No service reviews submitted yet. Be the first to leave one!</p>
               ) : (
                 <div className="space-y-4 max-h-[460px] overflow-y-auto pr-2 custom-scrollbar">
                   {serviceReviews.map((rev) => (
-                    <div key={rev.id} className="bg-slate-900/60 border border-white/5 rounded-xl p-5 space-y-3">
+                    <div key={rev.id} className="bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/5 rounded-xl p-5 space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-xs text-white">{rev.user?.name || "Driver"}</span>
+                        <span className="font-bold text-xs text-slate-950 dark:text-white font-medium">{rev.user?.name || "Driver"}</span>
                         <div className="flex gap-0.5">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <Star 
@@ -438,7 +463,7 @@ export default function Home() {
                           ))}
                         </div>
                       </div>
-                      <p className="text-xs text-slate-400 leading-relaxed italic">"{rev.comment}"</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic">"{rev.comment}"</p>
                       <span className="text-[9px] text-slate-600 block text-right font-medium">
                         {new Date(rev.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </span>
@@ -449,12 +474,12 @@ export default function Home() {
             </div>
 
             {/* Submit Service Review Card */}
-            <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 relative overflow-hidden shadow-xl">
-              <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden shadow-xl">
+              <h3 className="text-lg font-bold text-slate-950 dark:text-white font-medium mb-2 flex items-center gap-2">
                 <Star className="w-5 h-5 text-amber-400" />
                 Write a Service Review
               </h3>
-              <p className="text-xs text-slate-400 mb-6">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">
                 Tell us about your overall experience using ParkFlow AI.
               </p>
 
@@ -474,7 +499,7 @@ export default function Home() {
                   )}
 
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Overall Rating</label>
+                    <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Overall Rating</label>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -490,14 +515,14 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1.5">Feedback Comment</label>
+                    <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-1.5">Feedback Comment</label>
                     <textarea
                       required
                       value={comment}
                       onChange={(e) => { setComment(e.target.value); setReviewSuccess(false); }}
                       placeholder="Excellent gate speed, beautiful design..."
                       rows={4}
-                      className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 resize-none"
+                      className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-cyan-500/40 resize-none"
                     />
                   </div>
 
@@ -517,7 +542,7 @@ export default function Home() {
                 </form>
               ) : (
                 <div className="border border-dashed border-white/15 rounded-xl p-8 text-center flex flex-col items-center justify-center min-h-[220px]">
-                  <p className="text-xs text-slate-500 italic mb-4 max-w-[200px]">You must be signed in to submit a service review.</p>
+                  <p className="text-xs text-slate-900 dark:text-slate-500 italic mb-4 max-w-[200px]">You must be signed in to submit a service review.</p>
                   <Button 
                     onClick={() => router.push("/login")}
                     className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2.5 rounded-lg text-xs"

@@ -98,11 +98,28 @@ export async function submitServiceReview(rating: number, comment: string) {
 }
 
 export async function getServiceReviews() {
-  const response = await fetch(`${API_BASE_URL}/api/reviews/service`);
+  try {
+      const url =
+        process.env.NEXT_PUBLIC_API_BASE_URL
+          ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/reviews/service`
+          : '/api/reviews/service';
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch service reviews");
+      const response = await fetch(url);
+
+      if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+      }
+
+      return await response.json();
+
+  } catch (error) {
+      console.error(
+        'Review fetch failed:',
+        error
+      );
+
+      return [];
   }
-
-  return response.json();
 }

@@ -1,11 +1,14 @@
 import { Controller, Get, Param, Query, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ParkingService, ParkingLotResponse } from './parking.service';
 
+@ApiTags('Parking')
 @Controller('api/parking')
 export class ParkingController {
   constructor(private readonly parkingService: ParkingService) {}
 
   @Get('search')
+  @ApiOperation({ summary: 'Search parking lots with various filters' })
   async search(
     @Query('query') query?: string,
     @Query('lat') latStr?: string,
@@ -44,6 +47,7 @@ export class ParkingController {
   }
 
   @Get('nearby')
+  @ApiOperation({ summary: 'Get nearby parking lots based on coordinates' })
   async nearby(
     @Query('lat') latStr: string,
     @Query('lng') lngStr: string,
@@ -60,6 +64,7 @@ export class ParkingController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get details of a single parking lot' })
   async findOne(@Param('id') id: string): Promise<ParkingLotResponse> {
     const lot = await this.parkingService.findOne(id);
     if (!lot) {

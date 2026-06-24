@@ -92,8 +92,8 @@ export function SearchBar() {
   return (
     <div className="relative w-full max-w-2xl z-20" ref={dropdownRef}>
       {/* Search Input Container */}
-      <div className="relative flex items-center bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl p-1 shadow-2xl focus-within:border-cyan-500/50 transition-colors group">
-        <Search className="w-5 h-5 text-slate-400 ml-4 shrink-0 group-focus-within:text-cyan-400 transition-colors" />
+      <div className="relative flex items-center bg-white shadow-sm dark:bg-slate-900/60 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-2xl p-1 shadow-2xl focus-within:border-cyan-500/50 transition-colors group">
+        <Search className="w-5 h-5 text-slate-600 dark:text-slate-400 ml-4 shrink-0 group-focus-within:text-cyan-600 dark:text-cyan-400 transition-colors" />
         
         <input
           type="text"
@@ -101,8 +101,8 @@ export function SearchBar() {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           onFocus={() => setShowSuggestions(true)}
-          placeholder="Where do you want to park? (e.g. Kozhikode Beach, Lulu Mall)"
-          className="w-full bg-transparent border-0 py-3.5 pl-3 pr-10 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-0 text-base"
+          placeholder="Describe where you're going (e.g. 'Near a mall with EV charging')"
+          className="w-full bg-transparent border-0 py-3.5 pl-3 pr-10 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-0 text-sm md:text-base"
         />
 
         {/* Action Buttons */}
@@ -110,7 +110,7 @@ export function SearchBar() {
           {searchQuery && (
             <button
               onClick={handleClear}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-200 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -119,7 +119,7 @@ export function SearchBar() {
           <button
             onClick={handleUseLocation}
             title="Use current location"
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-white/5 hover:border-cyan-500/30 flex items-center justify-center transition-all duration-300 active:scale-95"
+            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-600 dark:text-cyan-400 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 flex items-center justify-center transition-all duration-300 active:scale-95"
           >
             <Compass className="w-4.5 h-4.5 animate-pulse" />
           </button>
@@ -133,7 +133,7 @@ export function SearchBar() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-slate-950/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-slate-950/95 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.5)] overflow-hidden"
           >
             <div className="p-2 space-y-1">
               {suggestions.map((suggestion, index) => (
@@ -143,12 +143,12 @@ export function SearchBar() {
                   onMouseEnter={() => setActiveSuggestionIndex(index)}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-xl text-sm transition-colors ${
                     activeSuggestionIndex === index
-                      ? 'bg-cyan-500/10 text-cyan-400'
-                      : 'text-slate-300 hover:bg-slate-900/60'
+                      ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-white shadow-sm dark:bg-slate-900/60'
                   }`}
                 >
                   <MapPin className={`w-4 h-4 shrink-0 ${
-                    activeSuggestionIndex === index ? 'text-cyan-400' : 'text-slate-500'
+                    activeSuggestionIndex === index ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-900 dark:text-slate-500'
                   }`} />
                   <span className="truncate">{suggestion}</span>
                 </button>

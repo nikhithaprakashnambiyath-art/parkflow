@@ -6,7 +6,7 @@ export function LoadingState() {
       {[...Array(3)].map((_, i) => (
         <div 
           key={i} 
-          className="p-4 rounded-2xl border border-white/5 bg-slate-900/30 backdrop-blur-sm animate-pulse flex flex-col gap-4 relative overflow-hidden"
+          className="p-4 rounded-2xl border border-slate-300 dark:border-white/5 bg-slate-900/30 backdrop-blur-sm animate-pulse flex flex-col gap-4 relative overflow-hidden"
         >
           {/* Shimmer overlay effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
@@ -27,7 +27,7 @@ export function LoadingState() {
           </div>
           
           {/* Bottom details placeholders */}
-          <div className="flex justify-between items-center pt-2 border-t border-white/5">
+          <div className="flex justify-between items-center pt-2 border-t border-slate-300 dark:border-white/5">
             <div className="space-y-1">
               <div className="h-3 w-12 bg-slate-800 rounded" />
               <div className="h-4 w-20 bg-slate-800 rounded" />

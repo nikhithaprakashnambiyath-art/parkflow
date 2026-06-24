@@ -95,7 +95,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center p-6 relative selection:bg-cyan-500/30 overflow-hidden">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex items-center justify-center p-6 relative selection:bg-cyan-500/30 overflow-hidden">
       
       {/* Dynamic Background Gradients */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none" />
@@ -105,31 +105,31 @@ export default function LoginPage() {
       <Button 
         variant="ghost" 
         onClick={() => router.push('/')}
-        className="absolute top-8 left-8 text-slate-400 hover:text-white hover:bg-white/5"
+        className="absolute top-8 left-8 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5"
       >
         <ArrowLeft className="w-5 h-5 mr-2" /> Back to Home
       </Button>
 
-      <div className="w-full max-w-md bg-slate-900/60 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl relative z-10 overflow-hidden">
+      <div className="w-full max-w-md bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl relative z-10 overflow-hidden">
         
         {/* Decorative elements */}
         <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-tr from-cyan-400 to-blue-500 opacity-20 rounded-full blur-xl" />
 
         {/* Title / Logo Header */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-black text-white text-lg shadow-[0_0_20px_rgba(0,217,255,0.4)] mb-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-black text-slate-950 dark:text-white font-medium text-lg shadow-[0_0_20px_rgba(0,217,255,0.4)] mb-4">
             PF
           </div>
           <h2 className="text-2xl font-bold tracking-tight">Welcome to ParkFlow AI</h2>
-          <p className="text-sm text-slate-400 mt-1">Reserve secure parking in Kochi, Bangalore & Mumbai</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Reserve secure parking in Kochi, Bangalore & Mumbai</p>
         </div>
 
         {/* Action Tabs */}
-        <div className="grid grid-cols-2 p-1 bg-slate-950 border border-white/5 rounded-2xl mb-6 relative">
+        <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/5 rounded-2xl mb-6 relative">
           <button
             onClick={() => { setTab('login'); setErrorMsg(''); }}
             className={`py-2 text-sm font-semibold rounded-xl transition-all relative z-10 ${
-              tab === 'login' ? 'text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              tab === 'login' ? 'text-slate-950 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-200'
             }`}
           >
             Log In
@@ -137,7 +137,7 @@ export default function LoginPage() {
           <button
             onClick={() => { setTab('register'); setErrorMsg(''); }}
             className={`py-2 text-sm font-semibold rounded-xl transition-all relative z-10 ${
-              tab === 'register' ? 'text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
+              tab === 'register' ? 'text-slate-950 font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-200'
             }`}
           >
             Register
@@ -178,31 +178,31 @@ export default function LoginPage() {
                 className="space-y-4"
               >
                 <div>
-                  <label className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2 block">Full Name</label>
+                  <label className="text-xs text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 block">Full Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900 dark:text-slate-500" />
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Alex Mercer"
-                      className="w-full bg-slate-950/40 border border-white/15 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
+                      className="w-full bg-white shadow-sm dark:bg-slate-950/40 border border-white/15 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-950 dark:text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Role Switcher for Registration */}
                 <div>
-                  <label className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2 block">Select Role</label>
+                  <label className="text-xs text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 block">Select Role</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setRole('CUSTOMER')}
                       className={`py-2.5 rounded-xl border text-xs font-semibold transition-all ${
                         role === 'CUSTOMER' 
-                          ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400' 
-                          : 'border-white/10 bg-slate-950/20 text-slate-400 hover:border-white/20'
+                          ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' 
+                          : 'border-slate-300 dark:border-white/10 bg-slate-950/20 text-slate-600 dark:text-slate-400 hover:border-white/20'
                       }`}
                     >
                       Customer User
@@ -212,8 +212,8 @@ export default function LoginPage() {
                       onClick={() => setRole('ADMIN')}
                       className={`py-2.5 rounded-xl border text-xs font-semibold transition-all ${
                         role === 'ADMIN' 
-                          ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400' 
-                          : 'border-white/10 bg-slate-950/20 text-slate-400 hover:border-white/20'
+                          ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400' 
+                          : 'border-slate-300 dark:border-white/10 bg-slate-950/20 text-slate-600 dark:text-slate-400 hover:border-white/20'
                       }`}
                     >
                       Parking Admin
@@ -226,32 +226,32 @@ export default function LoginPage() {
 
           {/* Email field */}
           <div>
-            <label className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2 block">Email Address</label>
+            <label className="text-xs text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 block">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900 dark:text-slate-500" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="alex@example.com"
-                className="w-full bg-slate-950/40 border border-white/15 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
+                className="w-full bg-white shadow-sm dark:bg-slate-950/40 border border-white/15 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-950 dark:text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
               />
             </div>
           </div>
 
           {/* Password field */}
           <div>
-            <label className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2 block">Password</label>
+            <label className="text-xs text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider mb-2 block">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900 dark:text-slate-500" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-950/40 border border-white/15 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
+                className="w-full bg-white shadow-sm dark:bg-slate-950/40 border border-white/15 focus:border-cyan-500/50 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-950 dark:text-white font-medium focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
               />
             </div>
           </div>
@@ -281,7 +281,7 @@ export default function LoginPage() {
         {/* Divider */}
         <div className="flex items-center my-6">
           <div className="flex-1 h-[1px] bg-white/10" />
-          <span className="text-slate-500 text-xs px-3 uppercase tracking-wider font-bold">Or continue with</span>
+          <span className="text-slate-900 dark:text-slate-500 text-xs px-3 uppercase tracking-wider font-bold">Or continue with</span>
           <div className="flex-1 h-[1px] bg-white/10" />
         </div>
 
@@ -291,7 +291,7 @@ export default function LoginPage() {
           onClick={handleGoogleMock}
           disabled={isLoading}
           variant="outline"
-          className="w-full border-white/15 text-slate-300 hover:bg-white/5 py-6 rounded-xl flex items-center justify-center gap-2"
+          className="w-full border-white/15 text-slate-700 dark:text-slate-300 hover:bg-white/5 py-6 rounded-xl flex items-center justify-center gap-2"
         >
           <svg className="w-4 h-4 mr-1 shrink-0" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -303,10 +303,10 @@ export default function LoginPage() {
         </Button>
 
         {/* Test account guides */}
-        <div className="mt-6 text-center text-xs text-slate-500 leading-relaxed bg-slate-950/40 border border-white/5 p-3 rounded-xl">
-          <span className="font-semibold text-slate-400 block mb-1">Quick-test accounts available:</span>
-          Customer: <span className="text-cyan-400 font-mono">alex@example.com / password123</span><br />
-          Admin: <span className="text-cyan-400 font-mono">admin@example.com / admin123</span>
+        <div className="mt-6 text-center text-xs text-slate-900 dark:text-slate-500 leading-relaxed bg-white shadow-sm dark:bg-slate-950/40 border border-slate-300 dark:border-white/5 p-3 rounded-xl">
+          <span className="font-semibold text-slate-600 dark:text-slate-400 block mb-1">Quick-test accounts available:</span>
+          Customer: <span className="text-cyan-600 dark:text-cyan-400 font-mono">alex@example.com / password123</span><br />
+          Admin: <span className="text-cyan-600 dark:text-cyan-400 font-mono">admin@example.com / admin123</span>
         </div>
 
       </div>

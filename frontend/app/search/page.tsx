@@ -35,7 +35,7 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-50 flex flex-col font-sans overflow-hidden">
+    <div className="min-h-screen bg-[#030712] text-slate-900 dark:text-slate-50 flex flex-col font-sans overflow-hidden">
       
       <AnimatePresence mode="wait">
         {!isSearching ? (
@@ -66,14 +66,14 @@ export default function SearchPage() {
               <motion.div 
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="flex items-center gap-2 cursor-pointer px-4 py-1.5 rounded-full bg-slate-900/60 border border-white/5 backdrop-blur-md"
+                className="flex items-center gap-2 cursor-pointer px-4 py-1.5 rounded-full bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/5 backdrop-blur-md"
                 onClick={() => router.push('/')}
               >
-                <div className="w-5 h-5 rounded bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-black text-white text-[10px]">
+                <div className="w-5 h-5 rounded bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-black text-slate-950 dark:text-white font-medium text-[10px]">
                   PF
                 </div>
-                <span className="text-xs font-semibold tracking-wider uppercase text-slate-300">ParkFlow AI Discovery</span>
-                <Sparkles className="w-3 h-3 text-cyan-400" />
+                <span className="text-xs font-semibold tracking-wider uppercase text-slate-700 dark:text-slate-300">ParkFlow AI Discovery</span>
+                <Sparkles className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
               </motion.div>
 
               {/* Centered Heading */}
@@ -90,7 +90,7 @@ export default function SearchPage() {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-sm sm:text-base text-slate-400 max-w-md mx-auto"
+                  className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-md mx-auto"
                 >
                   Discover and reserve premium, secure parking spots near your destination instantly.
                 </motion.p>
@@ -113,13 +113,13 @@ export default function SearchPage() {
                 transition={{ delay: 0.4 }}
                 className="space-y-3 pt-4"
               >
-                <span className="text-xs text-slate-500 font-bold uppercase tracking-widest block">Popular Kerala Landmarks</span>
+                <span className="text-xs text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest block">Popular Kerala Landmarks</span>
                 <div className="flex flex-wrap items-center justify-center gap-2 max-w-lg">
                   {['Kozhikode Beach', 'HiLite Mall, Calicut', 'Lulu Mall, Kochi', 'Thampanoor Hub', 'Thrissur Round'].map((area) => (
                     <button
                       key={area}
                       onClick={() => handlePopularAreaClick(area)}
-                      className="px-3.5 py-2 rounded-xl bg-slate-900/40 hover:bg-slate-900 border border-white/5 hover:border-cyan-500/30 text-xs font-semibold text-slate-300 hover:text-cyan-400 transition-all duration-300 active:scale-95"
+                      className="px-3.5 py-2 rounded-xl bg-white shadow-sm dark:bg-slate-900/40 hover:bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-all duration-300 active:scale-95"
                     >
                       {area}
                     </button>
@@ -140,13 +140,13 @@ export default function SearchPage() {
             className="flex-1 flex flex-col overflow-hidden"
           >
             {/* Header Navigation Bar */}
-            <header className="w-full py-4 px-6 border-b border-white/5 flex items-center justify-between gap-4 bg-slate-950/60 backdrop-blur-xl z-20 shrink-0">
+            <header className="w-full py-4 px-6 border-b border-slate-300 dark:border-white/5 flex items-center justify-between gap-4 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl z-20 shrink-0">
               
               {/* Back Button & Brand Logo */}
               <div className="flex items-center gap-4 shrink-0">
                 <button
                   onClick={handleBack}
-                  className="p-2.5 rounded-xl bg-slate-900 border border-white/15 hover:border-white/30 text-slate-300 hover:text-white transition-all active:scale-95 flex items-center justify-center"
+                  className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-white/15 hover:border-white/30 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:text-white font-medium transition-all active:scale-95 flex items-center justify-center"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
@@ -155,10 +155,10 @@ export default function SearchPage() {
                   className="flex items-center gap-2 cursor-pointer hidden sm:flex" 
                   onClick={() => router.push('/')}
                 >
-                  <div className="w-7 h-7 rounded bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-white text-xs">
+                  <div className="w-7 h-7 rounded bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium text-xs">
                     PF
                   </div>
-                  <span className="text-lg font-black tracking-tight">ParkFlow <span className="text-cyan-400">AI</span></span>
+                  <span className="text-lg font-black tracking-tight">ParkFlow <span className="text-cyan-600 dark:text-cyan-400">AI</span></span>
                 </div>
               </div>
 
@@ -171,7 +171,7 @@ export default function SearchPage() {
               <div className="shrink-0">
                 <button
                   onClick={() => router.push('/dashboard')}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-white/10 text-xs font-bold transition-all duration-200"
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-800 border border-slate-300 dark:border-white/10 text-xs font-bold transition-all duration-200"
                 >
                   Dashboard
                 </button>

@@ -7,7 +7,7 @@ import {
   Search,
   RefreshCw,
   Compass,
-  Trophy,
+  Sparkles,
 } from "lucide-react";
 import { useSearchStore } from "@/store/searchStore";
 import { ParkingCard } from "./ParkingCard";
@@ -36,13 +36,16 @@ export function SearchResults() {
   useEffect(() => {
     // Initial fetch on mount
     fetchResults();
+    const { startLiveUpdates, stopLiveUpdates } = useSearchStore.getState();
+    startLiveUpdates();
+    return () => stopLiveUpdates();
   }, []);
 
   return (
     <div className="flex-1 w-full h-[calc(100vh-180px)] flex flex-col relative overflow-hidden">
       {/* Search Header Info (Counts & Mobile Filters toggle) */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-white/5 shrink-0 bg-slate-950/40">
-        <span className="text-xs font-semibold text-slate-400">
+      <div className="flex items-center justify-between px-6 py-3 border-b border-slate-300 dark:border-white/5 shrink-0 bg-white shadow-sm dark:bg-slate-950/40">
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
           {loading
             ? "Searching parking spaces..."
             : `${results.length} spot${results.length !== 1 ? "s" : ""} available near Kozhikode, Kerala`}
@@ -51,7 +54,7 @@ export function SearchResults() {
         {/* Desktop Filters Toggle */}
         <button
           onClick={() => setShowDesktopFilters(!showDesktopFilters)}
-          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 font-semibold hover:border-cyan-500/30 transition-all duration-300"
+          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300 font-semibold hover:border-cyan-500/30 transition-all duration-300"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
           <span>{showDesktopFilters ? "Hide Filters" : "Show Filters"}</span>
@@ -61,7 +64,7 @@ export function SearchResults() {
         <div className="flex items-center gap-2 md:hidden">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-white/10 text-xs text-slate-300 font-semibold"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300 font-semibold"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
           </button>
@@ -87,7 +90,7 @@ export function SearchResults() {
       <div className="flex-1 w-full flex overflow-hidden relative">
         {/* Desktop Left / Mobile List View (35%) */}
         <div
-          className={`h-full md:w-[35%] border-r border-white/10 flex flex-col bg-slate-950/40 relative z-10 shrink-0 ${
+          className={`h-full md:w-[35%] border-r border-slate-300 dark:border-white/10 flex flex-col bg-white shadow-sm dark:bg-slate-950/40 relative z-10 shrink-0 ${
             mobileMode === "list" ? "w-full flex" : "hidden md:flex"
           }`}
         >
@@ -112,7 +115,7 @@ export function SearchResults() {
                 <span>Error: {error}</span>
                 <button
                   onClick={fetchResults}
-                  className="text-xs text-cyan-400 font-bold hover:underline flex items-center gap-1"
+                  className="text-xs text-cyan-600 dark:text-cyan-400 font-bold hover:underline flex items-center gap-1"
                 >
                   <RefreshCw className="w-3 h-3" /> Try Again
                 </button>
@@ -130,15 +133,15 @@ export function SearchResults() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 flex items-center gap-2"
+                    className="p-3 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center gap-2"
                   >
-                    <Trophy className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                    <Sparkles className="w-4 h-4 text-indigo-400 flex-shrink-0" />
                     <div>
-                      <div className="text-xs font-bold text-amber-400">
-                        Best Match
+                      <div className="text-xs font-bold text-indigo-400">
+                        AI Recommended
                       </div>
-                      <div className="text-[11px] text-amber-300/80">
-                        Based on your preferences
+                      <div className="text-[11px] text-indigo-300/80">
+                        Nearest, cheapest, and fastest exit
                       </div>
                     </div>
                   </motion.div>
@@ -170,7 +173,7 @@ export function SearchResults() {
 
         {/* Desktop Right / Mobile Map View (65%) */}
         <div
-          className={`h-full flex-1 relative bg-slate-900 overflow-hidden ${
+          className={`h-full flex-1 relative bg-white dark:bg-slate-900 overflow-hidden ${
             mobileMode === "map" ? "block" : "hidden md:block"
           }`}
         >
@@ -185,7 +188,7 @@ export function SearchResults() {
                   animate={{ y: isBottomSheetExpanded ? "20%" : "75%" }}
                   exit={{ y: "100%" }}
                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                  className="fixed inset-x-0 bottom-0 z-30 bg-slate-950/95 border-t border-white/10 rounded-t-3xl shadow-[0_-12px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex flex-col h-[80vh] overflow-hidden"
+                  className="fixed inset-x-0 bottom-0 z-30 bg-slate-950/95 border-t border-slate-300 dark:border-white/10 rounded-t-3xl shadow-[0_-12px_30px_rgba(0,0,0,0.6)] backdrop-blur-xl flex flex-col h-[80vh] overflow-hidden"
                 >
                   {/* Drag Handle Bar */}
                   <div
@@ -198,7 +201,7 @@ export function SearchResults() {
                   </div>
 
                   {/* Summary count */}
-                  <div className="px-5 pb-2 text-center text-xs text-slate-400 font-bold uppercase tracking-wider">
+                  <div className="px-5 pb-2 text-center text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">
                     {isBottomSheetExpanded
                       ? "All Spots List"
                       : "Swipe Up to View Spot Details"}
@@ -230,12 +233,12 @@ export function SearchResults() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md p-6 flex flex-col justify-center"
+            className="fixed inset-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md p-6 flex flex-col justify-center"
           >
             <div className="w-full max-w-md mx-auto relative">
               <button
                 onClick={() => setShowMobileFilters(false)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-200 text-xs font-bold uppercase"
+                className="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-200 text-xs font-bold uppercase"
               >
                 Close
               </button>

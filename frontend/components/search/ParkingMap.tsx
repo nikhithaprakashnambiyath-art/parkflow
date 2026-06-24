@@ -130,7 +130,7 @@ export function ParkingMap() {
 
   return (
     <div 
-      className="w-full h-full relative bg-[#070b13] overflow-hidden select-none cursor-grab active:cursor-grabbing rounded-2xl border border-white/5"
+      className="w-full h-full relative bg-[#070b13] overflow-hidden select-none cursor-grab active:cursor-grabbing rounded-2xl border border-slate-300 dark:border-white/5"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUpOrLeave}
@@ -303,7 +303,7 @@ export function ParkingMap() {
                         ? 'bg-cyan-500 border-cyan-400 text-slate-950 scale-110 shadow-cyan-500/20'
                         : spot.availability === 0
                         ? 'bg-slate-900/95 border-rose-500/50 text-rose-400'
-                        : 'bg-slate-900/90 border-white/10 hover:border-cyan-500/50 text-white'
+                        : 'bg-slate-900/90 border-slate-300 dark:border-white/10 hover:border-cyan-500/50 text-slate-950 dark:text-white font-medium'
                     }`}
                   >
                     {spot.hasEVCharging && <Zap className="w-2.5 h-2.5 text-current shrink-0" />}
@@ -327,26 +327,26 @@ export function ParkingMap() {
       <div className="absolute top-4 right-4 flex flex-col gap-1.5 z-10">
         <button
           onClick={handleZoomIn}
-          className="p-2 rounded-xl bg-slate-950/80 border border-white/5 hover:border-cyan-500/30 text-slate-300 hover:text-cyan-400 transition-colors backdrop-blur-md"
+          className="p-2 rounded-xl bg-white/80 dark:bg-slate-950/80 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors backdrop-blur-md"
         >
           <ZoomIn className="w-4.5 h-4.5" />
         </button>
         <button
           onClick={handleZoomOut}
-          className="p-2 rounded-xl bg-slate-950/80 border border-white/5 hover:border-cyan-500/30 text-slate-300 hover:text-cyan-400 transition-colors backdrop-blur-md"
+          className="p-2 rounded-xl bg-white/80 dark:bg-slate-950/80 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors backdrop-blur-md"
         >
           <ZoomOut className="w-4.5 h-4.5" />
         </button>
         <button
           onClick={handleReset}
-          className="p-2 rounded-xl bg-slate-950/80 border border-white/5 hover:border-cyan-500/30 text-slate-300 hover:text-cyan-400 transition-colors backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-center"
+          className="p-2 rounded-xl bg-white/80 dark:bg-slate-950/80 border border-slate-300 dark:border-white/5 hover:border-cyan-500/30 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:text-cyan-400 transition-colors backdrop-blur-md text-[10px] font-black uppercase tracking-wider text-center"
         >
           Reset
         </button>
       </div>
 
       {/* Floating GPS Indicator Overlay */}
-      <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-slate-950/70 border border-white/5 text-[10px] text-slate-400 font-bold backdrop-blur-md flex items-center gap-1.5 pointer-events-none">
+      <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-slate-950/70 border border-slate-300 dark:border-white/5 text-[10px] text-slate-600 dark:text-slate-400 font-bold backdrop-blur-md flex items-center gap-1.5 pointer-events-none">
         <Navigation className="w-3.5 h-3.5 text-blue-500 animate-pulse" />
         <span>India GPS Engine Active</span>
       </div>

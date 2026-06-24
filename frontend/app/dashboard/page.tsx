@@ -89,8 +89,13 @@ export default function Dashboard() {
     async function loadData() {
       try {
         setLoading(true);
-        // Verify session
+        // Verify session — throws immediately if no token present
         const profile = await getProfile();
+        if (!profile) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
         setUser(profile);
 
         // Fetch bookings, vehicles, and notifications
@@ -104,8 +109,12 @@ export default function Dashboard() {
         setVehicles(carList);
         setNotifications(alerts);
         await loadReviewedBookingState(bookingsHistory);
-      } catch (err) {
-        console.error('Failed to load user profile or data:', err);
+      } catch (err: any) {
+        // Silent redirect for auth failures; show error for backend being unreachable
+        const isAuthError = err?.status === 401 || err?.message === 'Unauthenticated';
+        if (!isAuthError) {
+          console.error('Dashboard load error:', err);
+        }
         router.push('/login');
       } finally {
         setLoading(false);
@@ -217,9 +226,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
-        <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Syncing user workspace...</span>
+      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-10 h-10 text-cyan-600 dark:text-cyan-400 animate-spin" />
+        <span className="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Syncing user workspace...</span>
       </div>
     );
   }
@@ -229,24 +238,24 @@ export default function Dashboard() {
       PENDING: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
       ACTIVE: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
       COMPLETED: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-      CANCELLED: 'bg-slate-800/40 text-slate-400 border-white/5',
+      CANCELLED: 'bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-white/5',
     };
-    return map[status] || 'bg-slate-900 text-slate-400';
+    return map[status] || 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400';
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex selection:bg-cyan-500/30 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex selection:bg-cyan-500/30 relative overflow-hidden">
       
       {/* Background decoration elements */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
+      <aside className="w-64 border-r border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
         <div className="flex items-center gap-2.5 mb-12 cursor-pointer" onClick={() => router.push('/')}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(0,217,255,0.4)]">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium shadow-[0_0_15px_rgba(0,217,255,0.4)]">
             PF
           </div>
-          <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-cyan-400">AI</span></span>
+          <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-cyan-600 dark:text-cyan-400">AI</span></span>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -263,8 +272,8 @@ export default function Dashboard() {
               onClick={() => item.isPage ? router.push(item.path!) : setActiveTab(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                 activeTab === item.id 
-                  ? 'bg-cyan-500/10 text-cyan-400 font-bold' 
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold' 
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5'
               }`}
             >
               <item.icon className="w-4.5 h-4.5" />
@@ -275,8 +284,8 @@ export default function Dashboard() {
 
         <div className="mt-auto space-y-4">
           <div className="p-4 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30">
-            <h4 className="font-bold text-white text-sm flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-cyan-400" /> Premium Club</h4>
-            <p className="text-[10px] text-slate-300 mt-1 leading-relaxed">Save flat 10% on monthly passes & dynamic rates.</p>
+            <h4 className="font-bold text-slate-950 dark:text-white font-medium text-sm flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400" /> Premium Club</h4>
+            <p className="text-[10px] text-slate-700 dark:text-slate-300 mt-1 leading-relaxed">Save flat 10% on monthly passes & dynamic rates.</p>
             <Button size="sm" className="w-full bg-white text-slate-950 font-bold hover:bg-slate-200 mt-3 text-xs py-4 rounded-lg">Upgrade</Button>
           </div>
           
@@ -298,10 +307,20 @@ export default function Dashboard() {
             <h1 className="text-3xl font-black mb-1 flex items-center gap-2">
               Welcome back, {user?.name || 'Alex'}
             </h1>
-            <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">Driver Workspace Portal</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest font-bold">Driver Workspace Portal</p>
           </div>
 
           <div className="flex items-center gap-4">
+            {user?.role === 'ADMIN' && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => router.push('/admin/dashboard')}
+                className="border-cyan-500/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 font-bold"
+              >
+                Admin Portal
+              </Button>
+            )}
             <ThemeToggle />
             {/* Real-Time Alerts Bell Popover */}
             <div className="relative">
@@ -309,7 +328,7 @@ export default function Dashboard() {
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setShowNotificationInbox(!showNotificationInbox)}
-                className="hover:bg-slate-900 border border-white/10 rounded-xl relative text-slate-400 hover:text-white"
+                className="hover:bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl relative text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium"
               >
                 <Bell className="w-5 h-5" />
                 {unreadAlertsCount > 0 && (
@@ -323,18 +342,18 @@ export default function Dashboard() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 15 }}
-                    className="absolute right-0 mt-3 w-80 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl p-4 z-30"
+                    className="absolute right-0 mt-3 w-80 bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl shadow-2xl p-4 z-30"
                   >
-                    <div className="flex justify-between items-center pb-2.5 border-b border-white/5 mb-3">
+                    <div className="flex justify-between items-center pb-2.5 border-b border-slate-300 dark:border-white/5 mb-3">
                       <span className="text-xs font-bold uppercase tracking-wider">Alert Notifications</span>
-                      <button onClick={() => setShowNotificationInbox(false)} className="text-slate-500 hover:text-white">
+                      <button onClick={() => setShowNotificationInbox(false)} className="text-slate-900 dark:text-slate-500 hover:text-slate-950 dark:text-white font-medium">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
 
                     <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar text-xs">
                       {notifications.length === 0 ? (
-                        <div className="text-slate-500 italic py-4 text-center">No alerts logged.</div>
+                        <div className="text-slate-900 dark:text-slate-500 italic py-4 text-center">No alerts logged.</div>
                       ) : (
                         notifications.map((alert) => (
                           <div 
@@ -342,13 +361,13 @@ export default function Dashboard() {
                             onClick={() => !alert.readStatus && handleMarkRead(alert.id)}
                             className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
                               alert.readStatus 
-                                ? 'bg-slate-950/20 border-transparent text-slate-400' 
+                                ? 'bg-slate-950/20 border-transparent text-slate-600 dark:text-slate-400' 
                                 : 'bg-cyan-500/5 border-cyan-500/20 text-slate-200'
                             }`}
                           >
                             <p className="leading-relaxed">{alert.message}</p>
                             {!alert.readStatus && (
-                              <span className="text-[9px] font-bold text-cyan-400 uppercase tracking-widest mt-1 block flex items-center gap-1">
+                              <span className="text-[9px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest mt-1 block flex items-center gap-1">
                                 <Check className="w-3 h-3" /> Mark as read
                               </span>
                             )}
@@ -379,9 +398,9 @@ export default function Dashboard() {
           >
             {/* Live / Upcoming Reservation Panel */}
             <section>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3.5">Live Session Tracker</h2>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3.5">Live Session Tracker</h2>
               {activeBooking ? (
-                <div className="bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 relative overflow-hidden group">
+                <div className="bg-white dark:bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none" />
                   
                   <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -390,20 +409,20 @@ export default function Dashboard() {
                         <div className="w-6 h-6 rounded-full bg-cyan-400 shadow-[0_0_15px_rgba(0,217,255,1)] animate-pulse" />
                       </div>
                       <div>
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] font-black uppercase tracking-wider mb-1.5">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 text-[9px] font-black uppercase tracking-wider mb-1.5">
                           {activeBooking.status}
                         </div>
-                        <h3 className="text-xl font-black text-white">{activeBooking.slot?.lot?.name || 'Active Lot'}</h3>
-                        <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-1.5 font-medium">
-                          <MapPin className="w-4 h-4 text-cyan-400" /> Spot {activeBooking.slot?.name || 'A1'} • {activeBooking.slot?.lot?.location}
+                        <h3 className="text-xl font-black text-slate-950 dark:text-white font-medium">{activeBooking.slot?.lot?.name || 'Active Lot'}</h3>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5 mt-1.5 font-medium">
+                          <MapPin className="w-4 h-4 text-cyan-600 dark:text-cyan-400" /> Spot {activeBooking.slot?.name || 'A1'} • {activeBooking.slot?.lot?.location}
                         </p>
                       </div>
                     </div>
                     
-                    <div className="flex gap-4 items-center bg-slate-950/50 p-4 rounded-2xl border border-white/5 w-full md:w-auto">
+                    <div className="flex gap-4 items-center bg-slate-950/50 p-4 rounded-2xl border border-slate-300 dark:border-white/5 w-full md:w-auto">
                       <div className="text-right">
-                        <p className="text-[9px] text-slate-500 uppercase tracking-widest font-black mb-1">Session Countdown</p>
-                        <p className="text-xl font-black text-cyan-400 tracking-tight font-mono">{countdownText}</p>
+                        <p className="text-[9px] text-slate-900 dark:text-slate-500 uppercase tracking-widest font-black mb-1">Session Countdown</p>
+                        <p className="text-xl font-black text-cyan-600 dark:text-cyan-400 tracking-tight font-mono">{countdownText}</p>
                       </div>
                       <div className="h-10 w-[1px] bg-white/10" />
                       <div className="flex gap-2">
@@ -417,7 +436,7 @@ export default function Dashboard() {
                           href={`https://www.google.com/maps/search/?api=1&query=${activeBooking.slot?.lot?.name}`} 
                           target="_blank" 
                           rel="noreferrer"
-                          className="flex items-center justify-center border border-white/15 hover:border-white/30 text-white font-bold text-xs px-4 rounded-xl transition-all"
+                          className="flex items-center justify-center border border-white/15 hover:border-white/30 text-slate-950 dark:text-white font-medium font-bold text-xs px-4 rounded-xl transition-all"
                         >
                           <Navigation className="w-3.5 h-3.5 mr-1" /> Route
                         </a>
@@ -430,7 +449,7 @@ export default function Dashboard() {
                         </Button>
                         {showReviewModal && (
                           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                            <div className="bg-slate-900 p-6 rounded-xl w-96">
+                            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl w-96">
                               <h3 className="text-lg font-bold mb-4 text-slate-200">Rate Your Parking</h3>
                               <div className="flex space-x-1 mb-3">
                                 {[1,2,3,4,5].map((star) => (
@@ -472,12 +491,12 @@ export default function Dashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-slate-900/40 border border-white/5 p-8 rounded-3xl text-center flex flex-col items-center justify-center min-h-[140px]">
-                  <p className="text-slate-500 italic text-sm">No active or upcoming reservations found.</p>
+                <div className="bg-white shadow-sm dark:bg-slate-900/40 border border-slate-300 dark:border-white/5 p-8 rounded-3xl text-center flex flex-col items-center justify-center min-h-[140px]">
+                  <p className="text-slate-900 dark:text-slate-500 italic text-sm">No active or upcoming reservations found.</p>
                   <Button 
                     variant="link" 
                     onClick={() => router.push('/search')}
-                    className="text-cyan-400 hover:text-cyan-300 font-bold text-xs mt-2 uppercase tracking-wider flex items-center gap-1"
+                    className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-300 font-bold text-xs mt-2 uppercase tracking-wider flex items-center gap-1"
                   >
                     Find parking spaces now <ArrowRight className="w-3.5 h-3.5" />
                   </Button>
@@ -485,19 +504,46 @@ export default function Dashboard() {
               )}
             </section>
 
+            {/* Smart Availability Prediction Widget */}
+            <section className="bg-gradient-to-br from-slate-900 to-slate-900/50 border border-indigo-500/20 rounded-3xl p-6 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-indigo-400" />
+                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Smart Availability Prediction</h2>
+                <div className="ml-auto px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[9px] font-black uppercase tracking-wider">AI Powered</div>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-4 relative z-10">
+                <div className="bg-slate-950/50 border border-slate-300 dark:border-white/5 p-4 rounded-2xl">
+                  <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest mb-1">Peak Hours Today</p>
+                  <p className="text-lg font-black text-slate-950 dark:text-white font-medium">4:00 PM - 7:00 PM</p>
+                  <p className="text-xs text-rose-400 mt-1 font-medium">High congestion expected</p>
+                </div>
+                <div className="bg-slate-950/50 border border-slate-300 dark:border-white/5 p-4 rounded-2xl">
+                  <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest mb-1">Lulu Mall (Favorite)</p>
+                  <p className="text-lg font-black text-slate-950 dark:text-white font-medium">85% Full</p>
+                  <p className="text-xs text-amber-400 mt-1 font-medium">Spots filling up fast</p>
+                </div>
+                <div className="bg-slate-950/50 border border-slate-300 dark:border-white/5 p-4 rounded-2xl border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                  <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-widest mb-1">Recommendation</p>
+                  <p className="text-lg font-black text-slate-950 dark:text-white font-medium">Book Now</p>
+                  <p className="text-xs text-indigo-400 mt-1 font-medium">Probability of finding spot: 12%</p>
+                </div>
+              </div>
+            </section>
+
             {/* Split analytics grid */}
             <div className="grid lg:grid-cols-3 gap-8">
               
               {/* Usage Analytics */}
-              <div className="lg:col-span-2 bg-slate-900 border border-white/5 rounded-3xl p-6 flex flex-col">
+              <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl p-6 flex flex-col">
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-slate-200">
                       <BarChart3 className="w-4 h-4 text-purple-400" /> Driving Analytics
                     </h3>
-                    <p className="text-xs text-slate-400 mt-1 font-medium">Your parking hours this week</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium">Your parking hours this week</p>
                   </div>
-                  <select className="bg-slate-950 border border-white/10 text-xs font-semibold rounded-lg px-2.5 py-1.5 outline-none text-slate-300">
+                  <select className="bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/10 text-xs font-semibold rounded-lg px-2.5 py-1.5 outline-none text-slate-700 dark:text-slate-300">
                     <option>This Week</option>
                   </select>
                 </div>
@@ -517,7 +563,7 @@ export default function Dashboard() {
               </div>
 
               {/* Saved Locations */}
-              <div className="bg-slate-900 border border-white/5 rounded-3xl p-6">
+              <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-3xl p-6">
                 <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 mb-6 text-slate-200">
                   <MapPin className="w-4 h-4 text-emerald-400" /> Top Indian Cities
                 </h3>
@@ -531,16 +577,16 @@ export default function Dashboard() {
                     <div 
                       key={i} 
                       onClick={() => router.push('/search')}
-                      className="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-white/10"
+                      className="flex items-center gap-3.5 p-3 rounded-2xl hover:bg-white/5 cursor-pointer transition-all border border-transparent hover:border-slate-300 dark:border-white/10"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-slate-950 border border-white/5 flex items-center justify-center text-slate-400">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400">
                         <MapPin className="w-4.5 h-4.5" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-bold text-xs text-white">{loc.name}</h4>
-                        <p className="text-[10px] text-slate-400 mt-0.5">{loc.desc}</p>
+                        <h4 className="font-bold text-xs text-slate-950 dark:text-white font-medium">{loc.name}</h4>
+                        <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">{loc.desc}</p>
                       </div>
-                      <span className="text-[10px] font-bold text-slate-500">{loc.count}</span>
+                      <span className="text-[10px] font-bold text-slate-900 dark:text-slate-500">{loc.count}</span>
                     </div>
                   ))}
                 </div>
@@ -559,7 +605,7 @@ export default function Dashboard() {
           >
             <div className="mb-6">
               <h2 className="text-xl font-black">Register License Plates</h2>
-              <p className="text-xs text-slate-400 mt-1">Add your vehicles to enable AI gate scans and automatic checking.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Add your vehicles to enable AI gate scans and automatic checking.</p>
             </div>
 
             {/* Error Message */}
@@ -570,25 +616,25 @@ export default function Dashboard() {
             )}
 
             {/* Add vehicle form */}
-            <form onSubmit={handleAddVehicle} className="bg-slate-900 border border-white/10 rounded-2xl p-5 grid sm:grid-cols-3 gap-4 items-end">
+            <form onSubmit={handleAddVehicle} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-2xl p-5 grid sm:grid-cols-3 gap-4 items-end">
               <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">License Plate Number</label>
+                <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">License Plate Number</label>
                 <input
                   type="text"
                   required
                   value={newPlate}
                   onChange={(e) => setNewPlate(e.target.value)}
                   placeholder="KA-01-MJ-9999"
-                  className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-white focus:outline-none"
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3.5 text-xs text-slate-950 dark:text-white font-medium focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-2">Vehicle Size / Type</label>
+                <label className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2">Vehicle Size / Type</label>
                 <select
                   value={newVehicleType}
                   onChange={(e) => setNewVehicleType(e.target.value)}
-                  className="w-full bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3 text-xs text-slate-300 focus:outline-none"
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-white/15 focus:border-cyan-500/50 rounded-xl py-2.5 px-3 text-xs text-slate-700 dark:text-slate-300 focus:outline-none"
                 >
                   <option value="suv">SUV / Luxury</option>
                   <option value="compact">Compact / Sedan</option>
@@ -609,21 +655,21 @@ export default function Dashboard() {
 
             {/* Registered vehicle list */}
             <div className="space-y-3 pt-4">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Registered Fleet ({vehicles.length})</span>
+              <span className="text-[10px] text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider block">Registered Fleet ({vehicles.length})</span>
               {vehicles.length === 0 ? (
-                <div className="bg-slate-900/20 border border-white/5 rounded-2xl p-6 text-center text-slate-500 italic text-xs">
+                <div className="bg-slate-900/20 border border-slate-300 dark:border-white/5 rounded-2xl p-6 text-center text-slate-900 dark:text-slate-500 italic text-xs">
                   No vehicles registered yet. Register a plate above for gate sensor testing.
                 </div>
               ) : (
                 vehicles.map((car) => (
-                  <div key={car.id} className="flex justify-between items-center bg-slate-900 border border-white/5 p-4 rounded-2xl">
+                  <div key={car.id} className="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-4 rounded-2xl">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-950 border border-white/5 flex items-center justify-center text-cyan-400">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-white/5 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
                         <Car className="w-4.5 h-4.5" />
                       </div>
                       <div>
                         <span className="text-sm font-mono font-black tracking-wider text-slate-200">{car.plateNumber}</span>
-                        <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider mt-0.5">{car.type}</span>
+                        <span className="text-[10px] text-slate-600 dark:text-slate-400 block font-semibold uppercase tracking-wider mt-0.5">{car.type}</span>
                       </div>
                     </div>
                     
@@ -637,7 +683,7 @@ export default function Dashboard() {
                         </Button>
                         {showReviewModal && (
                           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                            <div className="bg-slate-900 p-6 rounded-xl w-96">
+                            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl w-96">
                               <h3 className="text-lg font-bold mb-4 text-slate-200">Rate Your Parking</h3>
                               <div className="flex space-x-1 mb-3">
                                 {[1,2,3,4,5].map((star) => (
@@ -703,17 +749,17 @@ export default function Dashboard() {
           >
             <div className="mb-6">
               <h2 className="text-xl font-black">Booking History Logs</h2>
-              <p className="text-xs text-slate-400 mt-1">Review active, past checkouts, and cancelled parking slots.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Review active, past checkouts, and cancelled parking slots.</p>
             </div>
 
             <div className="space-y-3.5">
               {bookings.length === 0 ? (
-                <div className="bg-slate-900/20 border border-white/5 rounded-2xl p-8 text-center text-slate-500 italic text-xs">
+                <div className="bg-slate-900/20 border border-slate-300 dark:border-white/5 rounded-2xl p-8 text-center text-slate-900 dark:text-slate-500 italic text-xs">
                   No reservation history found.
                 </div>
               ) : (
                 bookings.map((b) => (
-                  <div key={b.id} className="bg-slate-900 border border-white/5 rounded-2xl p-5 flex flex-col sm:flex-row justify-between gap-4">
+                  <div key={b.id} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 rounded-2xl p-5 flex flex-col sm:flex-row justify-between gap-4">
                     <div className="space-y-2.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className={`px-2.5 py-0.5 rounded-full border text-[9px] font-black uppercase tracking-wider ${
@@ -721,22 +767,22 @@ export default function Dashboard() {
                         }`}>
                           {b.status}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500 font-bold uppercase">ID: {b.id.substring(0, 8)}</span>
+                        <span className="text-[10px] font-mono text-slate-900 dark:text-slate-500 font-bold uppercase">ID: {b.id.substring(0, 8)}</span>
                       </div>
                       
-                      <h3 className="text-base font-black text-white">{b.slot?.lot?.name || 'Smart Lot'}</h3>
-                      <p className="text-xs text-slate-400 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-cyan-400" /> Slot {b.slot?.name || 'A1'} • {b.slot?.lot?.location || 'Kochi, Kerala'}</p>
+                      <h3 className="text-base font-black text-slate-950 dark:text-white font-medium">{b.slot?.lot?.name || 'Smart Lot'}</h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> Slot {b.slot?.name || 'A1'} • {b.slot?.lot?.location || 'Kochi, Kerala'}</p>
                       
-                      <p className="text-[10px] text-slate-500 font-bold flex items-center gap-1.5">
+                      <p className="text-[10px] text-slate-900 dark:text-slate-500 font-bold flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
                         {new Date(b.startTime).toLocaleString('en-IN')} - {new Date(b.endTime).toLocaleString('en-IN')}
                       </p>
                     </div>
 
-                    <div className="sm:text-right flex sm:flex-col justify-between items-center sm:items-end shrink-0 border-t sm:border-0 border-white/5 pt-3 sm:pt-0">
+                    <div className="sm:text-right flex sm:flex-col justify-between items-center sm:items-end shrink-0 border-t sm:border-0 border-slate-300 dark:border-white/5 pt-3 sm:pt-0">
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-bold tracking-wider mb-0.5">Amount Paid</span>
-                        <span className="text-base font-black text-cyan-400">{formatCurrency(b.amount)}</span>
+                        <span className="text-[10px] text-slate-900 dark:text-slate-500 block uppercase font-bold tracking-wider mb-0.5">Amount Paid</span>
+                        <span className="text-base font-black text-cyan-600 dark:text-cyan-400">{formatCurrency(b.amount)}</span>
                       </div>
 
                       <div className="flex gap-2 mt-auto pt-2.5">
@@ -791,21 +837,21 @@ export default function Dashboard() {
             <h2 className="text-xl font-black mb-4">My Reviews</h2>
             {reviewsLoading && (
               <div className="flex justify-center py-4">
-                <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
+                <Loader2 className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-spin" />
               </div>
             )}
             {!reviewsLoading && myReviews.length === 0 && (
-              <p className="text-slate-500 italic">You have not submitted any reviews yet.</p>
+              <p className="text-slate-900 dark:text-slate-500 italic">You have not submitted any reviews yet.</p>
             )}
             <div className="space-y-4">
               {myReviews.map((rev) => (
-                <div key={rev.id} className="bg-slate-900 border border-white/10 rounded-xl p-4">
+                <div key={rev.id} className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Star className="w-4 h-4 fill-current text-amber-400" />
                     <span className="font-bold text-slate-200">{rev.rating} / 5</span>
                   </div>
-                  <p className="text-slate-300 mb-2">{rev.comment}</p>
-                  <div className="text-xs text-slate-400">
+                  <p className="text-slate-700 dark:text-slate-300 mb-2">{rev.comment}</p>
+                  <div className="text-xs text-slate-600 dark:text-slate-400">
                     <span>{rev.lot?.name || 'Parking Lot'}</span>
                     <span className="mx-2">·</span>
                     <span>{new Date(rev.createdAt).toLocaleDateString()}</span>
@@ -825,34 +871,34 @@ export default function Dashboard() {
           >
             <div>
               <h2 className="text-xl font-black">User Preferences</h2>
-              <p className="text-xs text-slate-400 mt-1">Configure user role setups and login caches.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Configure user role setups and login caches.</p>
             </div>
 
-            <div className="bg-slate-900 border border-white/5 p-6 rounded-2xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/5 p-6 rounded-2xl space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="text-xs font-bold text-slate-300 block">Name</span>
-                  <span className="text-sm font-semibold text-slate-400">{user?.name}</span>
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Name</span>
+                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">{user?.name}</span>
                 </div>
               </div>
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="text-xs font-bold text-slate-300 block">Email Address</span>
-                  <span className="text-sm font-semibold text-slate-400">{user?.email}</span>
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Email Address</span>
+                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">{user?.email}</span>
                 </div>
               </div>
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="text-xs font-bold text-slate-300 block">User Access Level</span>
-                  <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{user?.role}</span>
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">User Access Level</span>
+                  <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest">{user?.role}</span>
                 </div>
               </div>
             </div>
 
-            <div className="border border-white/10 rounded-2xl p-5 bg-rose-500/5 border-rose-500/20 space-y-3">
+            <div className="border border-slate-300 dark:border-white/10 rounded-2xl p-5 bg-rose-500/5 border-rose-500/20 space-y-3">
               <h3 className="text-sm font-bold text-rose-400">Exit Driver Portal</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Log out of your current session. You will need to log back in to review live reservation states.</p>
-              <Button onClick={handleLogout} className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-4.5 rounded-xl shadow-lg shadow-rose-500/10">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Log out of your current session. You will need to log back in to review live reservation states.</p>
+              <Button onClick={handleLogout} className="bg-rose-600 hover:bg-rose-500 text-slate-950 dark:text-white font-medium font-bold text-xs py-4.5 rounded-xl shadow-lg shadow-rose-500/10">
                 Sign Out Account
               </Button>
             </div>

@@ -72,17 +72,17 @@ export default function StaffScannerPage() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
+      <Loader2 className="w-10 h-10 text-cyan-600 dark:text-cyan-400 animate-spin" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex selection:bg-cyan-500/30">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-50 flex selection:bg-cyan-500/30">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
+      <aside className="w-64 border-r border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-950/60 backdrop-blur-xl flex flex-col p-6 sticky top-0 h-screen z-20 shrink-0">
         <div className="flex items-center gap-2.5 mb-10 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-white">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-slate-950 dark:text-white font-medium">
             <span className="text-xs font-black">PF</span>
           </div>
           <span className="text-xl font-black tracking-tight">ParkFlow <span className="text-emerald-400 text-xs block font-bold">Staff</span></span>
@@ -95,7 +95,7 @@ export default function StaffScannerPage() {
             { label: "Vehicle Monitoring", path: "/staff/vehicles", icon: Car },
           ].map((item) => (
             <button key={item.path} onClick={() => router.push(item.path)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${(item as any).active ? "bg-emerald-500/10 text-emerald-400" : "text-slate-400 hover:text-white hover:bg-white/5"}`}>
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${(item as any).active ? "bg-emerald-500/10 text-emerald-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:text-white font-medium hover:bg-white/5"}`}>
               <item.icon className="w-4 h-4" /> {item.label}
             </button>
           ))}
@@ -108,7 +108,7 @@ export default function StaffScannerPage() {
       <main className="flex-1 p-8 lg:p-10 overflow-y-auto relative z-10">
         <header className="mb-8">
           <h1 className="text-3xl font-black">QR Scanner</h1>
-          <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mt-1">Scan or enter booking ID to process entry/exit</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 uppercase tracking-widest font-bold mt-1">Scan or enter booking ID to process entry/exit</p>
         </header>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -120,7 +120,7 @@ export default function StaffScannerPage() {
                 <button key={a} onClick={() => setAction(a)}
                   className={`py-4 rounded-2xl border font-bold text-sm transition-all ${action === a
                     ? a === "ENTRY" ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400" : "bg-blue-500/15 border-blue-500/40 text-blue-400"
-                    : "border-white/10 text-slate-400 hover:border-white/20"
+                    : "border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:border-white/20"
                   }`}>
                   {a === "ENTRY" ? "🚗 Entry Gate" : "🏁 Exit Gate"}
                 </button>
@@ -131,7 +131,7 @@ export default function StaffScannerPage() {
             <div className={`relative rounded-3xl overflow-hidden border-2 aspect-square flex flex-col items-center justify-center transition-all ${gateOpen
               ? action === "ENTRY" ? "border-emerald-500/60 bg-emerald-500/5 shadow-[0_0_40px_rgba(16,185,129,0.15)]"
               : "border-blue-500/60 bg-blue-500/5 shadow-[0_0_40px_rgba(59,130,246,0.15)]"
-              : "border-white/10 bg-slate-900/60"}`}>
+              : "border-slate-300 dark:border-white/10 bg-white shadow-sm dark:bg-slate-900/60"}`}>
               <AnimatePresence mode="wait">
                 {gateOpen ? (
                   <motion.div key="open" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
@@ -143,13 +143,13 @@ export default function StaffScannerPage() {
                       <h3 className={`text-2xl font-black ${action === "ENTRY" ? "text-emerald-400" : "text-blue-400"}`}>
                         {action === "ENTRY" ? "ENTRY GRANTED" : "EXIT GRANTED"}
                       </h3>
-                      <p className="text-sm text-slate-400 mt-1">Gate is opening...</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Gate is opening...</p>
                     </div>
                   </motion.div>
                 ) : (
                   <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-6 text-center p-8">
                     <div className="relative">
-                      <div className="w-24 h-24 rounded-2xl bg-slate-800 border-2 border-white/10 flex items-center justify-center">
+                      <div className="w-24 h-24 rounded-2xl bg-slate-800 border-2 border-slate-300 dark:border-white/10 flex items-center justify-center">
                         <Camera className="w-10 h-10 text-slate-600" />
                       </div>
                       {/* Corner scan lines */}
@@ -161,7 +161,7 @@ export default function StaffScannerPage() {
                       </div>
                     </div>
                     <div>
-                      <p className="text-slate-500 text-sm font-semibold">Point camera at QR code</p>
+                      <p className="text-slate-900 dark:text-slate-500 text-sm font-semibold">Point camera at QR code</p>
                       <p className="text-slate-600 text-xs mt-1">or enter Booking ID below</p>
                     </div>
                   </motion.div>
@@ -172,19 +172,19 @@ export default function StaffScannerPage() {
             {/* Manual Input */}
             <form onSubmit={handleScan} className="space-y-3">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900 dark:text-slate-500" />
                 <input
                   ref={inputRef}
                   value={bookingId}
                   onChange={e => setBookingId(e.target.value)}
                   placeholder="Paste or type Booking ID..."
-                  className="w-full bg-slate-900 border border-white/10 focus:border-emerald-500/50 rounded-xl py-4 pl-11 pr-4 text-sm text-white focus:outline-none transition-all font-mono"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/10 focus:border-emerald-500/50 rounded-xl py-4 pl-11 pr-4 text-sm text-slate-950 dark:text-white font-medium focus:outline-none transition-all font-mono"
                 />
               </div>
               <button type="submit" disabled={scanning || !bookingId.trim()}
                 className={`w-full py-4 rounded-xl font-bold text-sm flex items-center gap-2 justify-center transition-all disabled:opacity-50 ${action === "ENTRY"
                   ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-                  : "bg-blue-500 hover:bg-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]"}`}>
+                  : "bg-blue-500 hover:bg-blue-400 text-slate-950 dark:text-white font-medium shadow-[0_0_20px_rgba(59,130,246,0.3)]"}`}>
                 {scanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
                 {scanning ? "Processing..." : `Process ${action}`}
               </button>
@@ -202,7 +202,7 @@ export default function StaffScannerPage() {
             {/* Booking Details */}
             {result && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className="bg-slate-900 border border-emerald-500/20 rounded-3xl p-6">
+                className="bg-white dark:bg-slate-900 border border-emerald-500/20 rounded-3xl p-6">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-4 flex items-center gap-2">
                   <Check className="w-4 h-4" /> Booking Verified
                 </h3>
@@ -215,9 +215,9 @@ export default function StaffScannerPage() {
                     ["Status", result.status],
                     ["Amount", `₹${result.amount}`],
                   ].map(([k, v]) => (
-                    <div key={k} className="flex justify-between border-b border-white/5 pb-2 last:border-0">
-                      <span className="text-slate-500 font-bold uppercase tracking-wider">{k}</span>
-                      <span className="text-white font-semibold">{v}</span>
+                    <div key={k} className="flex justify-between border-b border-slate-300 dark:border-white/5 pb-2 last:border-0">
+                      <span className="text-slate-900 dark:text-slate-500 font-bold uppercase tracking-wider">{k}</span>
+                      <span className="text-slate-950 dark:text-white font-medium font-semibold">{v}</span>
                     </div>
                   ))}
                 </div>
@@ -225,8 +225,8 @@ export default function StaffScannerPage() {
             )}
 
             {/* Scan Log */}
-            <div className="bg-slate-900/60 border border-white/5 rounded-3xl p-5">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+            <div className="bg-white shadow-sm dark:bg-slate-900/60 border border-slate-300 dark:border-white/5 rounded-3xl p-5">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-4 flex items-center gap-2">
                 <Clock className="w-4 h-4" /> Scan Log
               </h3>
               {recentScans.length === 0 ? (
@@ -237,10 +237,10 @@ export default function StaffScannerPage() {
                     <div key={i} className={`flex items-center justify-between p-3 rounded-xl border text-xs ${scan.status === "SUCCESS" ? "border-emerald-500/15 bg-emerald-500/5" : "border-rose-500/15 bg-rose-500/5"}`}>
                       <div className="flex items-center gap-2">
                         {scan.status === "SUCCESS" ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-rose-400" />}
-                        <span className="font-mono text-slate-300">{scan.id}</span>
+                        <span className="font-mono text-slate-700 dark:text-slate-300">{scan.id}</span>
                         <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${scan.action === "ENTRY" ? "text-emerald-400 bg-emerald-500/10" : "text-blue-400 bg-blue-500/10"}`}>{scan.action}</span>
                       </div>
-                      <span className="text-slate-500">{scan.time}</span>
+                      <span className="text-slate-900 dark:text-slate-500">{scan.time}</span>
                     </div>
                   ))}
                 </div>
