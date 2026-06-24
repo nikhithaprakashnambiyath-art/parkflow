@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Send, Bot, ParkingCircle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AIFab() {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [history, setHistory] = useState([
     { role: "ai", content: "Hi! I'm ParkFlow AI. Looking for parking or need help with a reservation?" }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +44,8 @@ export default function AIFab() {
       setHistory((prev) => [...prev, { role: "ai", content: reply }]);
     }, 1500);
   };
+
+  if (!mounted) return null;
 
   return (
     <>
