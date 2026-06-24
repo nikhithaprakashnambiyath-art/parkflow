@@ -40,6 +40,8 @@ interface SearchState {
   setSearchQuery: (query: string) => void;
   setSelectedSpot: (spot: ParkingLot | null) => void;
   setFilters: (filters: Partial<SearchFilters>) => void;
+  resetFilters: () => void;
+  fetchResults: () => Promise<void>;
   fetchSuggestions: (query: string) => void;
   startLiveUpdates: () => void;
   stopLiveUpdates: () => void;
